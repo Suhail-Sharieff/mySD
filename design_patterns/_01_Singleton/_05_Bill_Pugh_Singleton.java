@@ -1,4 +1,4 @@
-package object_oriented_design._01_Singleton;
+package design_patterns._01_Singleton;
 
 public class _05_Bill_Pugh_Singleton {
 

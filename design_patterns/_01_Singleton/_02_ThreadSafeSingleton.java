@@ -1,4 +1,4 @@
-package object_oriented_design._01_Singleton;
+package design_patterns._01_Singleton;
 //in prev approach since the instance was NOT thread safe, coz 2 threads when try to access getInstance at same time, then it may b instantited twice
 
 /*

@@ -1,4 +1,4 @@
-package object_oriented_design._01_Singleton;
+package design_patterns._01_Singleton;
 
 //DB conn is very expensive, v cant afford to create it again and again, so we create a singleton class , that provides same instance to all those who need it
 

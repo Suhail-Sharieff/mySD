@@ -1,4 +1,4 @@
-package object_oriented_design._01_Singleton;
+package design_patterns._01_Singleton;
 
 
 /*Prev 2 thread safe approaches are not that intutive to implement at first go, we can use the below shorter code */
