@@ -1,7 +1,11 @@
 package object_oriented_design._01_Singleton;
 //in prev approach since the instance was NOT thread safe, coz 2 threads when try to access getInstance at same time, then it may b instantited twice
 
-
+/*
+Initializing instance by Thread-0
+Instance Hash ID=76571692
+Instance Hash ID=76571692
+*/
 public class _02_ThreadSafeSingleton {
     public static void main(String[] args) throws InterruptedException {
         //2 threads trying to initialize myInstance simultaneously
