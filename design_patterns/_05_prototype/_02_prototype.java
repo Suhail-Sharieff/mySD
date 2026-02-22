@@ -4,7 +4,9 @@ package design_patterns._05_prototype;
 
 // the clone can be a shallow copy(same reference) and deep copy(diff reference) , so choose based on application
 
-class Enemy implements Cloneable{
+
+public class _02_prototype {
+    static class Enemy implements Cloneable{
     String attr1;
     String attr2;
     int attr3;
@@ -21,7 +23,6 @@ class Enemy implements Cloneable{
         return new Enemy(attr1, attr2, attr3, attr4);//deep copy    
     }
 }
-public class _02_prototype {
     public static void main(String[] args) {
         Enemy e1=new Enemy("Attr1", "Attr2", 23, 23);//just create one enemu
         Enemy e2=e1.clone();//see how simple it is not
