@@ -1,7 +1,7 @@
 package design_patterns._13_template;
 
 
-
+//when some methods are still same and very few different, we implement common meths in abstract class and do varyting impl in core class
 
 
 public class Main {
