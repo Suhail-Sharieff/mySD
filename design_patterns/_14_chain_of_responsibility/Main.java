@@ -1,26 +1,32 @@
 package design_patterns._14_chain_of_responsibility;
-//can be used to design chain of middle wares
+
+//can be used to build chained middlewares or tests
+
+
+
+
+
+
 public class Main {
+
     public static void main(String[] args) {
-        // Create handlers
-        RequestHandler auth = new AuthenticationHandler();
-        RequestHandler authorization = new AuthorizationHandler();
-        RequestHandler rateLimit = new RateLimitHandler();
-        RequestHandler validation = new ValidationHandler();
-        RequestHandler businessLogic = new BusinessLogicHandler();
 
-        // Build the chain
-        auth.setNext(authorization);
-        authorization.setNext(rateLimit);
-        rateLimit.setNext(validation);
-        validation.setNext(businessLogic);
+        Request req=new Request("TOKEN_1");
 
-        // Send a request through the chain
-        Request request = new Request("john", "ADMIN", 10, "{ \"data\": \"valid\" }");
-        auth.handle(request);
+        RequestHandler handler=RequestHandler.ChainBuilder
+        .buildChain(
+            new Check1(),
+            new Check2(),
+            new Check3()
+        );
 
-        System.out.println("\n--- Trying an invalid request ---");
-        Request badRequest = new Request(null, "USER", 150, "");
-        auth.handle(badRequest);
+
+        handler.handle(req);
     }
 }
+
+/*Check 1 PASS
+Check 2 FAIL : No "TOKEN_2" found
+
+//see that it didnt move to Check 3 ahead
+*/

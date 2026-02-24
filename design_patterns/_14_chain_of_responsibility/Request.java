@@ -1,15 +1,15 @@
 package design_patterns._14_chain_of_responsibility;
 
-public class Request {
-    public String user;
-    public String userRole;
-    public int requestCount;
-    public String payload;
+import java.util.Arrays;
+import java.util.HashSet;
 
-    public Request(String user, String role, int requestCount, String payload) {
-        this.user = user;
-        this.userRole = role;
-        this.requestCount = requestCount;
-        this.payload = payload;
+public 
+class Request{
+    private HashSet<String>attributes;
+    public Request(String ...attrs){
+        attributes=new HashSet<>(Arrays.asList(attrs));
+    }
+    public boolean has(String attribute){
+        return attributes.contains(attribute);
     }
 }
