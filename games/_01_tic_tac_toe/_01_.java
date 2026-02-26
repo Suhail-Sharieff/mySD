@@ -16,7 +16,8 @@ The problem with below design:
 - moves, turn, isEnded handled manully
 - Design breaks 
     - say i wanna change winning strategy in future
-    - change symbols    
+    - change symbols  
+- this design is restricted to 2 players so are 2 symbols(X and O), need full refactoring for multiplayer  
 
 */
 
@@ -35,6 +36,9 @@ public class _01_ {
         game.play(2, 2);
         game.play(0, 2);
         game.play(2, 1);
+
+        game.startNewGame();
+        game.resetGame();
     }
 }
 
@@ -138,7 +142,7 @@ class Game{
     }
 
     private boolean validMove(int i,int j){
-        return i>=0 && j>=0 && i<3 && j<3 && matrix[i][j]=='#';
+        return i>=0 && j>=0 && i<3 && j<3 && matrix[i][j]=='#';//v cnt place cell if its not empty so is the last condition
     }
    
     private boolean hasWinning(){
@@ -148,7 +152,7 @@ class Game{
         return allSame(matrix[0][2],matrix[1][1],matrix[2][0]);
     }
 
-    private boolean allSame(char ...arr){
+    private boolean allSame(char ...arr){//chks if all OOO or xxx 
         if(arr[0]=='#') return false;
         for(int i=1;i<arr.length;i++) if(arr[i]!=arr[i-1]) return false;
         return true;
