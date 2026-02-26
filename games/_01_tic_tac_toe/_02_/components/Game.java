@@ -1,8 +1,12 @@
-package games._01_tic_tac_toe._02_;
+package games._01_tic_tac_toe._02_.components;
 
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
+
+import games._01_tic_tac_toe._02_.strategies.DrawStrategy;
+import games._01_tic_tac_toe._02_.strategies.PostionStrategy;
+import games._01_tic_tac_toe._02_.strategies.WinningStrategy;
 
 public class Game{
     private final Board board;

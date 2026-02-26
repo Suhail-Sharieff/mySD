@@ -1,4 +1,4 @@
-package games._01_tic_tac_toe;
+package games._01_tic_tac_toe._01_;
 
 import java.util.Arrays;
 

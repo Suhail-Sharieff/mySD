@@ -1,4 +1,8 @@
-package games._01_tic_tac_toe._02_;
+package games._01_tic_tac_toe._02_.strategies;
+
+import games._01_tic_tac_toe._02_.components.Board;
+import games._01_tic_tac_toe._02_.components.Cell;
+import games._01_tic_tac_toe._02_.components.Symbol;
 
 public 
 interface WinningStrategy {

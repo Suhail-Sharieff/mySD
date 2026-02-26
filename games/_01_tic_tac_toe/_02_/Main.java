@@ -5,6 +5,18 @@ package games._01_tic_tac_toe._02_;
 import java.util.Arrays;
 import java.util.List;
 
+import games._01_tic_tac_toe._02_.components.Board;
+import games._01_tic_tac_toe._02_.components.Game;
+import games._01_tic_tac_toe._02_.components.Player;
+import games._01_tic_tac_toe._02_.strategies.ColWinningStrategy;
+import games._01_tic_tac_toe._02_.strategies.DiagonalWinningStrategy;
+import games._01_tic_tac_toe._02_.strategies.DrawStrategy;
+import games._01_tic_tac_toe._02_.strategies.DrawWinningStrategy;
+import games._01_tic_tac_toe._02_.strategies.PostionStrategy;
+import games._01_tic_tac_toe._02_.strategies.RowWinningStrategy;
+import games._01_tic_tac_toe._02_.strategies.ValidPositionStrategy;
+import games._01_tic_tac_toe._02_.strategies.WinningStrategy;
+
 public class Main {
     public static void main(String[] args) {
         List<Player>players=Arrays.asList(new Player(1, 'X'),new Player(2, 'O'));
