@@ -1,6 +1,15 @@
-package games._03_mine_sweep;
+package games._03_mine_sweep._01_brute;
 
 import java.util.List;
+
+
+/*
+- Though the below design is minimalistic with separation of game and matrix
+- See that supoose we want to add new winning strategy to game its complex
+- Game is actually handling too many things about board
+
+
+*/
 
 public class Main {
     public static void main(String[] args) {
@@ -25,6 +34,8 @@ public class Main {
         game.click(5, 0);
         // game.click(7, 1);
         game.click(2, 0);
+
+        game.flag(0, 0);
         game.click(0, 0);
         game.click(0, 3);
         game.click(2, 1);
@@ -34,6 +45,11 @@ public class Main {
         game.click(3, 4);
         game.click(3, 0);
         game.click(7, 0);
+
+        game.click(0, 0);
+        game.unflag(0, 0);
+        game.click(0, 0);
+
 
 
     }

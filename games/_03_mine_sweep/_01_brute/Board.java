@@ -1,4 +1,4 @@
-package games._03_mine_sweep;
+package games._03_mine_sweep._01_brute;
 
 import java.util.List;
 
@@ -6,6 +6,7 @@ public class Board {
 
     private int mat[][];
     private boolean isVisible[][];
+    private boolean isFlagged[][];
     private final List<int[]>bombPositions;
     private final int nRows;
     private final int nCols;
@@ -16,6 +17,7 @@ public class Board {
         this.nCols=nCols;
         mat=new int[nRows][nCols];
         isVisible=new boolean[nRows][nCols];
+        isFlagged=new boolean[nRows][nCols];
         this.bombPositions=bombPositions;
         placeBombs();
     }
@@ -40,6 +42,23 @@ public class Board {
         }
     }
 
+    public void flag(int i,int j){
+        isFlagged[i][j]=true;
+    }
+
+    public boolean hasFlag(int i,int j){
+        return isFlagged(i, j);
+    }
+
+
+    public void unflag(int i,int j){
+        isFlagged[i][j]=false;
+    }
+
+    public boolean isFlagged(int i,int j){
+        return isFlagged[i][j];
+    }
+
 
 
 
@@ -57,9 +76,12 @@ public class Board {
     }
 
     public void setVisible(int i,int j){
-        if(isVisibleCell(i, j)) return;//otherwise v will overcount nVisible
         nVisible++;
         isVisible[i][j]=true;
+    }
+    public void setInVisible(int i,int j){
+        nVisible--;
+        isVisible[i][j]=false;
     }
 
     public boolean allSafePositionsVisited(){
@@ -77,7 +99,8 @@ public class Board {
         StringBuilder sb=new StringBuilder();
         for(int i=0;i<nRows;i++){
             for(int j=0;j<nCols;j++){
-                if(isVisibleCell(i, j)){
+                if(isFlagged(i, j)) sb.append("F");
+                else if(isVisibleCell(i, j)){
                     sb.append(mat[i][j]);
                 }
                 else{
