@@ -38,14 +38,10 @@ public class Board {
     @Override
     public String toString() {
         StringBuilder sb=new StringBuilder("------------------------\n").append("  ");
-        sb.append(" 0 1  2  3  4 5  6  7");
+        sb.append(" 0  1  2  3  4  5  6  7");
         sb.append("\n");
         for(int i=0;i<nRows;i++){
-            sb.append(i).append(" ");
-            for(int j=0;j<nCols;j++){
-                Pawn c=mat[i][j];
-                sb.append(c).append(" ");
-            }
+            sb.append(i).append(" ").append(Arrays.toString(mat[i]).replaceAll(",", ""));
             sb.append("\n");
         }
         return sb.toString();
@@ -55,25 +51,23 @@ public class Board {
         Pawn pawn=getPawn(currX, currY);
         boolean movable[][]=new boolean[nRows][nCols];
         boolean beatable[][]=new boolean[nRows][nCols];
-        for(int pos[]:pawn.getListOfPossibleAttacks(this, currX, currY)) if(hasPawn(pos[0], pos[1]) && mat[pos[0]][pos[1]].getColor()!=pawn.getColor())beatable[pos[0]][pos[1]]=true;
+        for(int pos[]:pawn.getListOfPossibleAttacks(this, currX, currY)) beatable[pos[0]][pos[1]]=true;
 
-        for(int pos[]:pawn.getListOfPossibleMoves(this, currX, currY)) if(!hasPawn(pos[0], pos[1]))movable[pos[0]][pos[1]]=true;
+        for(int pos[]:pawn.getListOfPossibleMoves(this, currX, currY)) movable[pos[0]][pos[1]]=true;
 
+        String ans[][]=new String[nRows][nCols];
         StringBuilder sb=new StringBuilder("------------------------\n").append("  ");
-        
-        sb.append(" 0 1  2  3  4 5  6  7");
+        sb.append(" 0  1  2  3  4  5  6  7");
         sb.append("\n");
         for(int i=0;i<nRows;i++){
-            sb.append(i).append(" ");
             for(int j=0;j<nCols;j++){
                 Pawn p=mat[i][j];
-                if(beatable[i][j]) sb.append("$");
-                else if(movable[i][j]) sb.append("*");
-                else sb.append(p);
-                sb.append(" ");
+                if(beatable[i][j]) ans[i][j]="$ ";
+                else if(movable[i][j]) ans[i][j]="* ";
+                else ans[i][j]=p.toString();
             }
-            sb.append("\n");
+            sb.append(i).append(" ").append(Arrays.toString(ans[i])).append("\n");
         }
-        return sb.toString();
+        return sb.toString().replaceAll(",", "");
     }
 }

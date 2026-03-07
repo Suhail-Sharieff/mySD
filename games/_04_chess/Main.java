@@ -7,6 +7,22 @@ import java.util.*;
 import games._04_chess.Game.Game;
 import games._04_chess.components.Board;
 
+
+/*
+   0  1  2  3  4  5  6  7
+0 [♖ ♘ ♗ ♔ ♕ ♗ ♘ ♖]
+1 [♙ ♙ ♙ ♙ ♙ ♙ ♙ ♙]
+2 [.  .  .  .  .  .  .  . ]
+3 [.  .  .  .  .  .  .  . ]
+4 [.  .  .  .  .  .  .  . ]
+5 [.  .  .  .  .  .  .  . ]
+6 [♟ ♟ ♟ ♟ ♟ ♟ ♟ ♟]
+7 [♜ ♞ ♝ ♚ ♛ ♝ ♞ ♜]
+
+
+
+*/
+
 public class Main {
     public static void main(String[] args) throws IOException {
         init_IO();
@@ -20,7 +36,7 @@ public class Main {
     static void solve() throws IOException {
         Board board = new Board(8, 8);
         Game game = new Game(board);
-        int t = scanInt();
+        int t = 13;
         while (t-- > 0) {
             println(board);
             System.out.println("What pawn u wanna move?");
@@ -30,8 +46,11 @@ public class Main {
             System.out.println("Where do u wanna move?");
             int nx = scanInt();
             int ny = scanInt();
+            println(game.getTurn()+" moved "+board.getPawn(x, y)+" from "+"["+x+","+y+"]"+" to "+"["+nx+","+ny+"]");
             game.play(x, y, nx, ny);
             println(board);
+            println(game.getTurn()+" 's turn now!");
+
         }
 
     }

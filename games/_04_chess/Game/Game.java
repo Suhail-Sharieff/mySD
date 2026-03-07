@@ -22,6 +22,17 @@ public class Game {
     private Color turn;
 
 
+    public Color getTurn() {
+        return turn;
+    }
+
+
+    private void toggleTurn(){
+        if(turn==Color.White) turn=Color.Black;
+        else turn=Color.White;
+    }
+
+
     private void initGame(){
 
 
@@ -52,8 +63,11 @@ public class Game {
     }
 
     public void play(int fromX,int fromY,int toX,int toY){
+
         board.move(board.getPawn(fromX, fromY), fromX, fromY, toX, toY);
+        toggleTurn();;
     }
 
+    
    
 }
