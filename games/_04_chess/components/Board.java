@@ -32,7 +32,7 @@ public class Board {
         mat[toX][toY]=pawn;
     }
     public boolean hasPawn(int x,int y){
-        return mat[x][y]!=null;
+        return !mat[x][y].equals(EmptyCell.getEmptyCell());
     }
 
     @Override
@@ -45,6 +45,32 @@ public class Board {
             for(int j=0;j<nCols;j++){
                 Pawn c=mat[i][j];
                 sb.append(c).append(" ");
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
+
+    public String printGoables(int currX,int currY){
+        Pawn pawn=getPawn(currX, currY);
+        boolean movable[][]=new boolean[nRows][nCols];
+        boolean beatable[][]=new boolean[nRows][nCols];
+        for(int pos[]:pawn.getListOfPossibleAttacks(this, currX, currY)) if(hasPawn(pos[0], pos[1]) && mat[pos[0]][pos[1]].getColor()!=pawn.getColor())beatable[pos[0]][pos[1]]=true;
+
+        for(int pos[]:pawn.getListOfPossibleMoves(this, currX, currY)) if(!hasPawn(pos[0], pos[1]))movable[pos[0]][pos[1]]=true;
+
+        StringBuilder sb=new StringBuilder("------------------------\n").append("  ");
+        
+        sb.append(" 0 1  2  3  4 5  6  7");
+        sb.append("\n");
+        for(int i=0;i<nRows;i++){
+            sb.append(i).append(" ");
+            for(int j=0;j<nCols;j++){
+                Pawn p=mat[i][j];
+                if(beatable[i][j]) sb.append("$");
+                else if(movable[i][j]) sb.append("*");
+                else sb.append(p);
+                sb.append(" ");
             }
             sb.append("\n");
         }

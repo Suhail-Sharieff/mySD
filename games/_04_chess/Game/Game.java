@@ -1,7 +1,5 @@
 package games._04_chess.Game;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
 
 import games._04_chess.components.Bishop;
 import games._04_chess.components.Board;
@@ -57,7 +55,5 @@ public class Game {
         board.move(board.getPawn(fromX, fromY), fromX, fromY, toX, toY);
     }
 
-    public void printBoard(BufferedWriter writer) throws IOException{
-        writer.write(board.toString());
-    }
+   
 }
