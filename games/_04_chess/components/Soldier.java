@@ -1,0 +1,42 @@
+package games._04_chess.components;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import games._04_chess.enums.Color;
+
+public class Soldier extends Pawn{
+
+    public Soldier(Color color) {
+        super(color);
+    }
+
+    @Override
+    public List<int[]> getListOfPossibleMoves(Board board,int currX,int currY) {
+        List<int[]>li=new ArrayList<>();
+        int nx=currX;
+        int ny=currY+1;
+        if(isValidPosition(nx, ny, board)) li.add(new int[]{nx,ny});
+        return li;
+    }
+
+    @Override
+    public List<int[]> getListOfPossibleAttacks(Board board,int currX,int currY) {
+        List<int[]>li=new ArrayList<>();
+        int nx=currX-1;
+        int ny=currY+1;
+        if(isValidPosition(nx, ny, board)) li.add(new int[]{nx,ny});
+        nx=currX+1;
+        ny=currY+1;
+        if(isValidPosition(nx, ny, board)) li.add(new int[]{nx,ny});
+        return li;
+    }
+
+
+    @Override
+    public String toString() {
+        return getColor()==Color.Black?"♙":"♟";
+    }
+    
+    
+}
