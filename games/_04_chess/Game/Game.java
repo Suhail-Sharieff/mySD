@@ -63,7 +63,10 @@ public class Game {
     }
 
     public void play(int fromX,int fromY,int toX,int toY){
-
+        if(board.getPawn(fromX, fromY).getColor()!=turn){
+            System.out.println("Invalid move, "+turn+" can move only "+turn+" pieces!");
+            return;
+        }
         board.move(board.getPawn(fromX, fromY), fromX, fromY, toX, toY);
         toggleTurn();;
     }

@@ -1,6 +1,9 @@
 package games._04_chess.components;
 
 import java.util.Arrays;
+import java.util.HashMap;
+
+import games._04_chess.enums.Color;
 
 public class Board {
     private final int nRows;
@@ -69,5 +72,29 @@ public class Board {
             sb.append(i).append(" ").append(Arrays.toString(ans[i])).append("\n");
         }
         return sb.toString().replaceAll(",", "");
+    }
+
+
+    public HashMap<Pawn,int[]> getPawnsOfColor(Color color){
+        HashMap<Pawn,int[]>hs=new HashMap<>();
+        for(int i=0;i<nRows;i++){
+            for(int j=0;j<nCols;j++){
+                if(hasPawn(i, j)){
+                    if(getPawn(i, j).getColor()==color){
+                        hs.put(mat[i][j], new int[]{i,j});
+                    }
+                }
+            }
+        }
+        return hs;
+    }
+
+    public boolean hasKing(Color color,int i,int j){
+        return (getPawn(i,j) instanceof King) && getPawn(i, j).getColor()==color;
+    }
+
+    public int[] getKingPosition(Color color){
+        for(int i=0;i<nRows;i++) for(int j=0;j<nCols;j++) if(hasKing(color, i, j) && mat[i][j].getColor()==color) return new int[]{i,j};
+        return new int[]{-1,-1};
     }
 }
