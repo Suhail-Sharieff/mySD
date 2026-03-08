@@ -36,7 +36,7 @@ public class Main {
     static void solve() throws IOException {
         Board board = new Board(8, 8);
         Game game = new Game(board);
-        int t = 13;
+        int t = 14;
         while (t-- > 0) {
             println(board);
             System.out.println("What pawn u wanna move?");
