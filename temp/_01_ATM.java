@@ -13,7 +13,12 @@ import java.util.Map;
 
 class AuthServer{
     private static final Map<String,User>userInfo=Map.of("user1@gmail.com", new User("User1", "user1@gmail.com"),"user2@gmail.com",new User("user2", "user2@gmail.com"));
+    private static final Map<String,Integer>pinInfo=Map.of("user1@gmail.com", 1234,"user2@gmail.com",1235);
     static User getUser(String email){
+        return userInfo.getOrDefault(email, null);
+    }
+    static User getUser(String email,int pin){
+        if(!pinInfo.containsKey(email) || pinInfo.get(email)!=pin) throw new RuntimeException("INcorrect pin");
         return userInfo.getOrDefault(email, null);
     }
 }
@@ -63,7 +68,7 @@ class DBServer{
 }
 interface AtmOps{
     void enterCard(Card card);
-    void enterPin(int pin);
+    void enterPin(int pin,AtmState nxtState);
     void deposit(double amt);
     void withdraw(double amt);
     double getBalance();
@@ -73,6 +78,10 @@ class Atm{
     private AtmState currState;
     private User user;
     private Card card;
+
+    public Atm() {
+        this.currState=new IdleState(this);
+    }
     
     public Card getCard() {
         return card;
@@ -93,6 +102,13 @@ class Atm{
     public void setUser(User user) {
         this.user = user;
     }
+
+
+   void enterCard(Card card){currState.enterCard(card);};
+    void enterPin(int pin,AtmState nxtState){currState.enterPin(pin, nxtState);};
+    void deposit(double amt){currState.deposit(amt);};
+    void withdraw(double amt){currState.withdraw(amt);};
+    double getBalance(){return currState.getBalance();};
     
 }
 
@@ -120,7 +136,7 @@ class IdleState extends AtmState{
 
    
     @Override
-    public void enterPin(int pin) {
+    public void enterPin(int pin,AtmState nxtState) {
         throw new RuntimeException("Insert card first!");
     }
 
@@ -167,9 +183,10 @@ class PinEntryState extends AtmState{
     }
 
     @Override
-    public void enterPin(int pin) {
+    public void enterPin(int pin,AtmState nxtState) {
         System.out.println("Pin entered!");
-        myAtm.setUser(AuthServer.getUser(myAtm.getCard().getEmail()));
+        myAtm.setUser(AuthServer.getUser(myAtm.getCard().getEmail(),pin));
+        myAtm.setCurrState(nxtState);
     }
 
     @Override
@@ -177,6 +194,41 @@ class PinEntryState extends AtmState{
         throw new RuntimeException("Enter PIN first!");
     }
 
+}
+
+class DepositState extends AtmState{
+
+    public DepositState(Atm myAtm) {
+        super(myAtm);
+    }
+
+    @Override
+    public void deposit(double amt) {
+        System.out.println("Depositing "+amt);        
+        DBServer.deposit(myAtm.getUser(), amt); 
+        myAtm.setCurrState(new IdleState(myAtm));
+    }
+
+    @Override
+    public void enterCard(Card card) {
+        throw new RuntimeException("Cnnot enter card while depositing!");
+    }
+
+    @Override
+    public void enterPin(int pin,AtmState nxtState) {
+       throw new RuntimeException("Cannot enter pin whie depositing!");
+    }
+
+    @Override
+    public double getBalance() {
+        throw new RuntimeException("Cannot fetch balance while depositing!");
+    }
+
+    @Override
+    public void withdraw(double amt) {
+       throw new RuntimeException("Cannot withdaw  while deposition!");
+    }
+    
 }
 
 
@@ -197,7 +249,7 @@ class WithdrawState extends AtmState{
     }
 
     @Override
-    public void enterPin(int pin) {
+    public void enterPin(int pin,AtmState nxtState) {
         throw new RuntimeException("Pin is already entered!");
     }
 
@@ -214,14 +266,52 @@ class WithdrawState extends AtmState{
     }
 }
 
+class GetBalanceState extends AtmState{
 
+    public GetBalanceState(Atm myAtm) {
+        super(myAtm);
+    }
+
+    @Override
+    public void deposit(double amt) {
+        throw new RuntimeException("Cannot deposit while fetching balance!");
+    }
+
+    @Override
+    public void enterCard(Card card) {
+        throw new RuntimeException("Cannot enter card while fetching balance!");
+    }
+
+    @Override
+    public void enterPin(int pin, AtmState nxtState) {
+        throw new RuntimeException("Cannot deponter ppin while fetching balance!");
+    }
+
+    @Override
+    public double getBalance() {
+        double balance=DBServer.getBalance(myAtm.getUser());
+        System.out.println("Balance is "+balance);
+        return balance;
+    }
+
+    @Override
+    public void withdraw(double amt) {
+        throw new RuntimeException("Cannot withdraw while fetching balance!");
+    }
+    
+}
 
 
 
 public class _01_ATM {
 
     public static void main(String[] args) {
-        
+        Atm atm=new Atm();
+        Card myCard=new Card("user1@gmail.com");
+
+        atm.enterCard(myCard);
+        atm.enterPin(0, null);
+        atm.getBalance();
     }
 
 
