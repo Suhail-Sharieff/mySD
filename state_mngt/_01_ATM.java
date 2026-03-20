@@ -10,7 +10,6 @@ package state_mngt;
 */
 
 import java.util.HashMap;
-import java.util.List;
 
 enum Denomination{
     TEN(10),
@@ -99,16 +98,23 @@ class Atm{
 
     public void insertCard(Card card){currState.insertCard(this,card);}
     public  void insertPIN(int PIN){currState.insertPIN(this,server,PIN);}
-    public  void depositAmount(int amt){currState.depositAmount(manager,this,amt);}
-    public  void dispenseAmount(int amt){currState.dispenseAmount(manager,this,amt,dispenser);}
+    public  void depositAmount(int amt){currState.depositAmount(this,amt);}
+    public  void dispenseAmount(int amt){currState.dispenseAmount(this,amt);}
 
+    public TransactionManager getTransactionManager() {
+        return  manager;
+    }
+
+    public CashDispenser getDispenser() {
+        return dispenser;
+    }
 }
 
 interface AtmState{
     void insertCard(Atm atm,Card card);
     void insertPIN(Atm atm,BankServer server,int PIN);
-    void depositAmount(TransactionManager manager,Atm atm,int amt);
-    void dispenseAmount(TransactionManager manager,Atm atm,int amt,CashDispenser dispenser);
+    void depositAmount(Atm atm,int amt);
+    void dispenseAmount(Atm atm,int amt);
     default void ejectCard(Atm atm){atm.ejectCard();};
 }
 
@@ -118,7 +124,7 @@ class IncorrectPinException extends  RuntimeException{@Override public String to
 class EnterPinException extends  RuntimeException{@Override public String toString() {return "Enter PIN first";}}
 class PinAlreadyEnteredException extends  RuntimeException{@Override public String toString() {return "PIN already recorded";}}
 class InsufficientBalanceException extends  RuntimeException{@Override public String toString() {return "Insufficent Balance";}}
-class InvalidDispensibleAmountException extends  RuntimeException{@Override public String toString() {return "Cannot dispense such amount with current denominations";}}
+class InvalidDispensableAmountException extends  RuntimeException{@Override public String toString() {return "Cannot dispense such amount with current denominations";}}
 
 
 record Card(int accNumber, int PIN) {
@@ -143,12 +149,12 @@ class IdleState implements AtmState{
     }
 
     @Override
-    public void depositAmount(TransactionManager manager,Atm atm,int amt) {
+    public void depositAmount(Atm atm,int amt) {
         throw  new CardNotInsertedException();
     }
 
     @Override
-    public void dispenseAmount(TransactionManager manager,Atm atm,int amt,CashDispenser dispenser) {
+    public void dispenseAmount(Atm atm,int amt) {
         throw  new CardNotInsertedException();
     }
 
@@ -177,12 +183,12 @@ class PinEntryState implements  AtmState{
     }
 
     @Override
-    public void depositAmount(TransactionManager manager,Atm atm,int amt) {
+    public void depositAmount(Atm atm,int amt) {
         throw new EnterPinException();
     }
 
     @Override
-    public void dispenseAmount(TransactionManager manager,Atm atm,int amt,CashDispenser dispenser) {
+    public void dispenseAmount(Atm atm,int amt) {
         throw new EnterPinException();
     }
 
@@ -206,17 +212,21 @@ class AuthenticatedState implements  AtmState{
     }
 
     @Override
-    public void depositAmount(TransactionManager manager,Atm atm,int amt) {
+    public void depositAmount(Atm atm,int amt) {
         System.out.println("Depositing amount..");
-        manager.depositAmount(atm.getCurrAccount(),amt);
+        atm.getTransactionManager().depositAmount(atm.getCurrAccount(),amt);
         atm.ejectCard();
     }
 
     @Override
-    public void dispenseAmount(TransactionManager manager,Atm atm,int amt,CashDispenser dispenser) {
-        manager.withDrawAmount(atm.getCurrAccount(),amt);
-        System.out.println("Dispensing amount");
-        dispenser.dispenseCash(amt);
+    public void dispenseAmount(Atm atm,int amt) {
+        try{
+            System.out.println("Dispensing amount");
+            atm.getDispenser().dispenseCash(amt);
+            atm.getTransactionManager().withDrawAmount(atm.getCurrAccount(),amt);
+        }catch (Exception e){
+            //rollback logic --- IMP for critical systems
+        }
         atm.ejectCard();
     }
 }
@@ -233,7 +243,6 @@ class TransactionManager{
 
 class CashDispenser{
     void dispenseCash(int amt){
-        if(!possibleToDispense(amt)) throw  new InvalidDispensibleAmountException();
         HashMap<Denomination,Integer>hs=new HashMap<>();
         Denomination[] denominations =Denomination.values();
         int len=denominations.length;
@@ -246,20 +255,8 @@ class CashDispenser{
             }
             amt-=val*cnt;
         }
+        if(amt!=0) throw  new InvalidDispensableAmountException();
         System.out.println("Cash Dispensed "+hs);
-    }
-
-    private boolean possibleToDispense(int amt){
-        Denomination[] denominations=Denomination.values();
-        int len=denominations.length;
-        for(int i=len-1;i>=0;i--){
-            Denomination curr=denominations[i];
-            int val=curr.getValue();
-            int cnt=amt/val;
-            amt-=val*cnt;
-        }
-        return amt==0;
-
     }
 }
 
@@ -274,7 +271,9 @@ public class _01_ATM{
 
         atm.insertCard(card);
         atm.insertPIN(123);
-        atm.dispenseAmount(90);
+        atm.dispenseAmount(30);
 
     }
 }
+
+// further the design could be improved by making Cash Dispenser into multiple Handlers for each denomination using Single Responsibility principle
