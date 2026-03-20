@@ -21,9 +21,10 @@ class Main{
 
 But say we want to add more methods in Shape interface ie draw(),exportAsSVG(),exportAsJSON()...then we have to implement each eveytnme we add in Circle and Rectangle
 
+Now say Circle implements Shape{}, now Circle class knows too much, it knows to calculateArea, export to svg and many future methods
 Overtime it becomes bulky and violates Open-Closed prinicple 
 
-So Solution is Visitor pattern
+So Solution is Visitor pattern, it can be used to separate algorithms or logic from classes knowing them, then Circle class will just call .accept(AnyTypeOfVisitor like AreaVisitor, SVG visitor etc   )
 
 Step1: Create ShapeVisitor where , for each of Shape u want create visit method
 interface ShapeVisitor{
