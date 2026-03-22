@@ -1,49 +1,44 @@
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class Test {
 
-    static int balance = 500;
+    public static void main(String[] args) {
 
-    public static void main(String[] args) throws InterruptedException {
+        ExecutorService ioBound=Executors.newFixedThreadPool(3);
+        ExecutorService cpuBound=Executors.newFixedThreadPool(10);
 
-        Thread t1 = new Thread(() -> {
-            try {
-                Thread.sleep(4000);
-                withDraw();
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }, "withdrawer");
-        Thread t2 = new Thread(() -> {
-            try {
+
+
+        // CompletableFuture<String>res= 
+        //     apiRequest("url1")
+        //     .thenCompose(res1->apiRequest("url2").thenApply(res2->res1+"\t"+res2))
+        //     .thenApply(String::toUpperCase);
+
+        CompletableFuture<Object>res= 
+            apiRequest("url1")
+            .thenApplyAsync(x->apiRequest("url2"),ioBound)
+            .thenApplyAsync(x->apiRequest("url3"),cpuBound);
+            ;
+
+        
+        
+        res.thenAcceptAsync(r->System.out.println(r));
+        System.out.println("Hi im executed first");
+        res.join();
+
+        // ioBound.close();
+        // cpuBound.close();
+    }
+
+    static CompletableFuture<String> apiRequest(String url){
+        return CompletableFuture.supplyAsync(()->{
+            try{
                 Thread.sleep(3000);
-                deposit();
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }, "depositor");
-
-        t1.start();
-        t2.start();
-
-        t1.join();
-        t2.join();
-        ;
-
-        System.out.println(balance);
-
+                System.out.println("fetched for "+url);
+            }catch(Exception e){}
+            return "Response = "+url;
+        });
     }
-
-    static void withDraw() throws InterruptedException {
-        System.out.println(Thread.currentThread().getName());
-        Thread.sleep(300);
-        balance -= 100;
-    }
-
-    static void deposit() throws InterruptedException {
-        System.out.println(Thread.currentThread().getName());
-        Thread.sleep(200);
-        balance += 200;
-    }
-
 }
