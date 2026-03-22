@@ -1,24 +1,41 @@
 public class Test {
 
+
+    static final Object obj=new Object();
     public static void main(String[] args) throws InterruptedException {
         
-        int cnt[]={0};
-        var t1=new Thread(()->{
-            for(int i=0;i<10000;i++) cnt[0]++;
+        Thread holder=new Thread(()->{
+            synchronized(obj){
+                System.out.println("holder holding resource");
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("Holder releasing lock");
+            }
+        });
+        Thread capturer=new Thread(()->{
+             synchronized(obj){
+                System.out.println("capturer holding resource");
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("capturer releasing resource");
+            }
         });
 
-        var t2=new Thread(()->{
-            for(int i=0;i<10000;i++) cnt[0]++;
-        });
 
-        t1.start();
-        t2.start();
+        holder.start();
+        Thread.sleep(300);
+        capturer.start();
+        Thread.sleep(300);
+        System.out.println(capturer.getState());
 
-        // t1.join();
-        // t2.join();
-        Thread.sleep(100);
-
-        System.out.println(cnt[0]);
+        holder.join();
+        capturer.join();;
 
     }
 
