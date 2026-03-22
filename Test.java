@@ -1,44 +1,25 @@
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Test {
 
     public static void main(String[] args) {
+        List<Integer>li=new Random().ints(10000000l).boxed().collect(Collectors.toList());
+        long st=System.nanoTime();
+        double pSum=li.parallelStream().map(e->Math.sqrt(e)).reduce(0d, (x,y)->x+y);
+        long en=System.nanoTime();
+        System.out.println((en-st)/(double)1e6);//takes 122.39 ms
 
-        ExecutorService ioBound=Executors.newFixedThreadPool(3);
-        ExecutorService cpuBound=Executors.newFixedThreadPool(10);
+        st=System.nanoTime();
+        double seqSum=li.stream().map(e->Math.sqrt(e)).reduce(0d, (x,y)->x+y);
+        en=System.nanoTime();
+        System.out.println((en-st)/(double)1e6);//takes 238.31 ms
 
+        //see parrallel ops are faster
 
-
-        // CompletableFuture<String>res= 
-        //     apiRequest("url1")
-        //     .thenCompose(res1->apiRequest("url2").thenApply(res2->res1+"\t"+res2))
-        //     .thenApply(String::toUpperCase);
-
-        CompletableFuture<Object>res= 
-            apiRequest("url1")
-            .thenApplyAsync(x->apiRequest("url2"),ioBound)
-            .thenApplyAsync(x->apiRequest("url3"),cpuBound);
-            ;
-
-        
-        
-        res.thenAcceptAsync(r->System.out.println(r));
-        System.out.println("Hi im executed first");
-        res.join();
-
-        // ioBound.close();
-        // cpuBound.close();
-    }
-
-    static CompletableFuture<String> apiRequest(String url){
-        return CompletableFuture.supplyAsync(()->{
-            try{
-                Thread.sleep(3000);
-                System.out.println("fetched for "+url);
-            }catch(Exception e){}
-            return "Response = "+url;
-        });
     }
 }
