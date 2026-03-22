@@ -30,12 +30,18 @@ public class Test {
 
         holder.start();
         Thread.sleep(300);
+        System.out.println(holder.getState());//timed state 
         capturer.start();
-        Thread.sleep(300);
+        Thread.sleep(300);//blocked 
+
+
         System.out.println(capturer.getState());
 
         holder.join();
         capturer.join();;
+
+
+        //story: holder statrs, locks obj for 2s, simultaneously after 0.3s capturer tries to acquire it, but it will be blocked, acquires the same obj when captureer releases it
 
     }
 
