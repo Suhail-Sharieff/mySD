@@ -1,13 +1,16 @@
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-public class Test {
+public class Test2 {
 
     public static void main(String[] args) throws InterruptedException, ExecutionException {
         
-        CompletableFuture<Order> cf=CompletableFuture.supplyAsync(()->getUser(23)).thenApplyAsync((user)->getUserLocation(user)).thenApplyAsync((addr)->getOrders(addr));
+        // CompletableFuture<CompletableFuture<Address>> x=getUser(23)
+        // // .thenApply(user->getUserLocation(user));
+        // CompletableFuture<Order> cf=getUser(23)
+        // .thenCompose(user->getUserLocation(user))
 
-        
-        
+
+
         cf.thenAccept(res->System.out.println(res));
         System.out.println("hi");
 
@@ -19,10 +22,9 @@ public class Test {
 
     static void printThread(String op){System.out.println("for "+op+": "+Thread.currentThread().getName());}
 
-    static User getUser(int id){return new User(id);}
-    static Address getUserLocation(User user){return new Address(user);}
-    static Order getOrders(Address addr){return new Order(addr);}
-
+    static CompletableFuture<User> getUser(int id){ return CompletableFuture.supplyAsync(()->new User(id));}
+    static CompletableFuture<Address> getUserLocation(User u){return CompletableFuture.supplyAsync(()->new Address(u));}
+    static CompletableFuture<Order> getOrders(Address addr){return CompletableFuture.supplyAsync(()->new Order(addr));}
 
     
 
