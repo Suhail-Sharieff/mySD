@@ -1,0 +1,40 @@
+Mar 25, 2026 12:16:59 AM Test lambda$1
+INFO: Execution time: 3007 ms
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2026-03-24T18:49:29.040930Z</date>
+  <millis>1774378169040</millis>
+  <nanos>930000</nanos>
+  <sequence>0</sequence>
+  <logger>test</logger>
+  <level>INFO</level>
+  <class>Test</class>
+  <method>lambda$1</method>
+  <thread>30</thread>
+  <message>Execution time: 3014 ms</message>
+</record>
+</log>
+Mar 25, 2026 12:20:00 AM Test lambda$1
+INFO: Execution time: 3010 ms
+Mar 25, 2026 12:21:28 AM Test lambda$1
+INFO: Execution time: 3008 ms
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2026-03-24T18:52:28.318056Z</date>
+  <millis>1774378348318</millis>
+  <nanos>56000</nanos>
+  <sequence>1</sequence>
+  <logger>test</logger>
+  <level>INFO</level>
+  <class>Test</class>
+  <method>lambda$1</method>
+  <thread>30</thread>
+  <message>Execution time: 3013 ms</message>
+</record>
+</log>
+Mar 25, 2026 12:25:17 AM Test lambda$1
+WARNING: Execution time: 3029 ms

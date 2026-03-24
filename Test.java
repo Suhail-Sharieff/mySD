@@ -1,44 +1,45 @@
+import java.text.Format;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
+import java.util.logging.*;
+
 public class Test {
 
-    public static void main(String[] args) throws InterruptedException, ExecutionException {
-        
-        CompletableFuture<Order> cf=CompletableFuture.supplyAsync(()->getUser(23)).thenApplyAsync((user)->getUserLocation(user)).thenApplyAsync((addr)->getOrders(addr));
+    public static void main(String[] args) throws Exception {
 
-        
-        
-        cf.thenAccept(res->System.out.println(res));
-        System.out.println("hi");
+        Logger log = Logger.getLogger("test");
 
-        cf.join();
+        // Create file handler
+        FileHandler fh = new FileHandler("test.log", true);
+        fh.setFormatter(new SimpleFormatter());
+        log.addHandler(fh);
 
+        log.setUseParentHandlers(true); // avoid console spam
 
+        long startTime = System.currentTimeMillis();
+
+        CompletableFuture<Integer> future =
+                CompletableFuture.supplyAsync(() -> sum(3000))
+                        .thenApply(result -> {
+                            long endTime = System.currentTimeMillis();
+                            log.log(Level.WARNING,"Execution time: " + (endTime - startTime) + " ms");
+                            return result;
+                        });
+
+        // Main thread is NOT blocked here
+        System.out.println("Main thread continues...");
+
+        future.join(); // only if you want to wait before program exits
     }
 
+    static int sum(int dur){
+        sleep(dur);
+        return 23;
+    }
 
-    static void printThread(String op){System.out.println("for "+op+": "+Thread.currentThread().getName());}
-
-    static User getUser(int id){return new User(id);}
-    static Address getUserLocation(User user){return new Address(user);}
-    static Order getOrders(Address addr){return new Order(addr);}
-
-
-    
-
-
-    
-    static void sleep(int dur){try{Thread.sleep(dur);}catch(InterruptedException ex){}}
-}
-
-
-class User{
-    public User(int id){Test.sleep(2000);Test.printThread("getUser");}
-}
-
-class Address{
-    public Address(User u){Test.sleep(3000);Test.printThread("getAddreess");}
-}
-class Order{
-    public Order(Address addr){Test.sleep(2000);Test.printThread("getOrder");}
+    static void sleep(int dur){
+        try {
+            System.out.println(Thread.currentThread().getName());
+            Thread.sleep(dur);
+        } catch (InterruptedException ignored) {}
+    }
 }
