@@ -8,6 +8,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
+//cyclic barrier works similar to countdown latch , but it provides resetting option too that latch doesnt provide, we can use it to wait say till all threads finish some action bfr moving to nxt action
+
 //v hv 3 threads
 //v have 4X4 matrix
 //v want to process blocks of 2X2 by all 3 threads together
