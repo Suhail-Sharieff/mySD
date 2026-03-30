@@ -1,45 +1,35 @@
-import java.text.Format;
-import java.util.concurrent.CompletableFuture;
-import java.util.logging.*;
+import java.util.function.Supplier;
 
 public class Test {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws InterruptedException {
 
-        Logger log = Logger.getLogger("test");
+        Supplier<Integer>sp=()->23;
 
-        // Create file handler
-        FileHandler fh = new FileHandler("test.log", true);
-        fh.setFormatter(new SimpleFormatter());
-        log.addHandler(fh);
 
-        log.setUseParentHandlers(true); // avoid console spam
+        ThreadLocal<Integer>tl=ThreadLocal.withInitial(sp);
 
-        long startTime = System.currentTimeMillis();
 
-        CompletableFuture<Integer> future =
-                CompletableFuture.supplyAsync(() -> sum(3000))
-                        .thenApply(result -> {
-                            long endTime = System.currentTimeMillis();
-                            log.log(Level.WARNING,"Execution time: " + (endTime - startTime) + " ms");
-                            return result;
-                        });
 
-        // Main thread is NOT blocked here
-        System.out.println("Main thread continues...");
+        Thread t1=new Thread(()->{
+            tl.set(23000);System.out.println(tl.get());try {
+                tl.remove();
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }System.out.println(tl.get());
+        });
 
-        future.join(); // only if you want to wait before program exits
-    }
+        Thread t2=new Thread(()->{tl.set(34000);System.out.println(tl.get());});
 
-    static int sum(int dur){
-        sleep(dur);
-        return 23;
-    }
 
-    static void sleep(int dur){
-        try {
-            System.out.println(Thread.currentThread().getName());
-            Thread.sleep(dur);
-        } catch (InterruptedException ignored) {}
+        t1.start();
+        t2.start();
+
+
+        t1.join();;
+        t2.join();;
+
     }
 }
