@@ -1,47 +1,24 @@
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.SynchronousQueue;
 
 public class Test {
 
     public static void main(String[] args) throws InterruptedException {
-        BlockingQueue<Integer> bq=new ArrayBlockingQueue<>(3);
-        
-        
-        Thread producer=new Thread(()->{
-            for(int i=0;i<10;i++){
-                try {
-                    bq.put(i);//blocks if more elemnts than cap
-                    System.out.println("produced "+i);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-         
-        Thread consumer=new Thread(()->{
-            for(int i=10;i<20;i++){
-                try {
-                    System.out.println(bq.take());//blocks if q is empty
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                try{Thread.sleep(1000);}catch(InterruptedException ex){}
+        SynchronousQueue<Integer> sq = new SynchronousQueue<>();
+
+        var t1 = new Thread(() -> {
+            try {
+                Thread.sleep(3000);
+                System.out.println(sq.take());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         });
 
-        //
+        t1.start();
 
+        // Start the producer put AFTER consumer thread started, else face deadlock
+        sq.put(23);
 
-        producer.start();
-        Thread.sleep(3000);
-        consumer.start();
-
-        producer.join();;
-        consumer.join();
-
-        System.out.println(bq);
-
-
+        t1.join();
     }
 }
