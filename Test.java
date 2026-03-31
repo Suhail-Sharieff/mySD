@@ -1,45 +1,65 @@
-import java.time.LocalTime;
-import java.util.Random;
-import java.util.concurrent.CyclicBarrier;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 
 public class Test {
 
-    /*
-    pool-1-thread-2 woke at 09:46:34.230866200
-    pool-1-thread-1 woke at 09:46:36.263810300
-    pool-1-thread-3 woke at 09:46:36.761054500
-    pool-1-thread-3 got released at 09:46:36.761688900
-    pool-1-thread-1 got released at 09:46:36.762791600
-    pool-1-thread-2 got released at 09:46:36.762791600 */
     public static void main(String[] args) {
-        int nThreads=3;
-        CyclicBarrier barrier=new CyclicBarrier(nThreads);
-        ExecutorService es=Executors.newFixedThreadPool(nThreads);
-        es.submit(()->new Service(barrier).run());
-        es.submit(()->new Service(barrier).run());
-        es.submit(()->new Service(barrier).run());
 
-        es.shutdown();
+        Callable<Integer> independentService1 = () -> {
+            sleep(1000);
+            return 1;
+        };
+        Callable<Integer> independentService2 = () -> {
+            sleep(2000);
+            return 2;
+        };
+        Callable<Integer> independentService3 = () -> {
+            sleep(2500);
+            return 3;
+        };
+
+        CompletableFuture<Integer> cf1 = CompletableFuture.supplyAsync(() -> {
+            try {
+                System.out.println("call1 in "+Thread.currentThread());
+                return independentService1.call();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        CompletableFuture<Integer> cf2 = CompletableFuture.supplyAsync(() -> {
+            try {
+                System.out.println("call2 in "+Thread.currentThread());
+                return independentService2.call();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        CompletableFuture<Integer> cf3 = CompletableFuture.supplyAsync(() -> {
+            try {
+                System.out.println("call3 in "+Thread.currentThread());
+                return independentService3.call();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+
+        CompletableFuture<Integer>res=cf1.thenCombine(cf2, (x,y)->x+y).thenCombine(cf3, (x,y)->x+y);
+
+        res.thenAccept(x->System.out.println(x));//all 3 run in parralle resuly in 2500 ms 
+
+
+        res.join();
+
 
     }
 
-
-    static Random rand=new Random();
-    static void sleep(){try{Thread.sleep(rand.nextLong(1000, 5000));}catch(InterruptedException ex){}}
-
-    static class Service implements Runnable{
-        private final CyclicBarrier barrier;
-        public Service(CyclicBarrier barrier) {
-            this.barrier=barrier;
-        }
-        @Override
-        public void run() {
-            sleep();
-            System.out.println(Thread.currentThread().getName()+" woke at "+LocalTime.now());
-            try{barrier.await();}catch(Exception ex){}
-            System.out.println(Thread.currentThread().getName()+" got released at "+LocalTime.now());
+    static void sleep(long dur) {
+        try {
+            Thread.sleep(dur);
+        } catch (InterruptedException ex) {
         }
     }
 }
