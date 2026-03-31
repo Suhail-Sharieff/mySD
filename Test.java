@@ -1,57 +1,45 @@
-import java.util.concurrent.CountDownLatch;
+import java.time.LocalTime;
+import java.util.Random;
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Test {
-    public static void main(String[] args) throws InterruptedException {
-        int serviceCount = 3;
-        CountDownLatch servicesReady = new CountDownLatch(serviceCount);
-        ExecutorService executor = Executors.newFixedThreadPool(serviceCount);
 
-        // Start database connection pool
-        executor.submit(() -> {
-            try {
-                System.out.println("1 Initializing database pool...");
-                Thread.sleep(2000);  // Simulate slow init
-                System.out.println("1 Database pool ready");
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            } finally {
-                servicesReady.countDown();
-            }
-        });
+    /*
+    pool-1-thread-2 woke at 09:46:34.230866200
+    pool-1-thread-1 woke at 09:46:36.263810300
+    pool-1-thread-3 woke at 09:46:36.761054500
+    pool-1-thread-3 got released at 09:46:36.761688900
+    pool-1-thread-1 got released at 09:46:36.762791600
+    pool-1-thread-2 got released at 09:46:36.762791600 */
+    public static void main(String[] args) {
+        int nThreads=3;
+        CyclicBarrier barrier=new CyclicBarrier(nThreads);
+        ExecutorService es=Executors.newFixedThreadPool(nThreads);
+        es.submit(()->new Service(barrier).run());
+        es.submit(()->new Service(barrier).run());
+        es.submit(()->new Service(barrier).run());
 
-        // Warm up cache
-        executor.submit(() -> {
-            try {
-                System.out.println("2 Warming up cache...");
-                Thread.sleep(1500);
-                System.out.println("2 Cache ready");
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            } finally {
-                servicesReady.countDown();
-            }
-        });
+        es.shutdown();
 
-        // Load configuration
-        executor.submit(() -> {
-            try {
-                System.out.println("3 Loading configuration...");
-                Thread.sleep(500);
-                System.out.println("3 Configuration loaded");
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            } finally {
-                servicesReady.countDown();
-            }
-        });
+    }
 
-        // Wait for all services
-        System.out.println("Waiting for services to initialize...");
-        servicesReady.await();
-        System.out.println("All services ready! Starting to accept requests.");
-        
-        executor.shutdown();
+
+    static Random rand=new Random();
+    static void sleep(){try{Thread.sleep(rand.nextLong(1000, 5000));}catch(InterruptedException ex){}}
+
+    static class Service implements Runnable{
+        private final CyclicBarrier barrier;
+        public Service(CyclicBarrier barrier) {
+            this.barrier=barrier;
+        }
+        @Override
+        public void run() {
+            sleep();
+            System.out.println(Thread.currentThread().getName()+" woke at "+LocalTime.now());
+            try{barrier.await();}catch(Exception ex){}
+            System.out.println(Thread.currentThread().getName()+" got released at "+LocalTime.now());
+        }
     }
 }
