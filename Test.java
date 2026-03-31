@@ -1,77 +1,86 @@
-import java.io.IOException;
-import java.net.http.HttpTimeoutException;
-import java.time.Duration;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.function.Function;
+import java.util.Random;
+import java.util.concurrent.*;
 import java.util.function.Supplier;
 
 public class Test {
 
-    private static final ScheduledExecutorService scheduler =
-        Executors.newScheduledThreadPool(1);
+    public static void main(String[] args) {
 
-    public static <T> CompletableFuture<T> retryWithBackoff(
-            Supplier<CompletableFuture<T>> operation,
-            int maxAttempts,
-            Duration initialDelay,
-            double backoffMultiplier) {
+        Random rand = new Random();
 
-        return attemptWithRetry(operation, maxAttempts, initialDelay,
-            backoffMultiplier, 1, null);
-    }
+        Callable<Integer> callable = () -> {
+            int r = rand.nextInt(4900, 5000);
+            System.out.println(r);
+            if (r % 2 == 0)
+                throw new RuntimeException("Some server error occured!");
+            else {
+                sleep(r);
+                return 1;
+            }
+        };
 
-    private static <T> CompletableFuture<T> attemptWithRetry(
-            Supplier<CompletableFuture<T>> operation,
-            int maxAttempts,
-            Duration delay,
-            double multiplier,
-            int attempt,
-            Throwable lastError) {
+        Supplier<CompletableFuture<Integer>> supplier = () -> {
+            return CompletableFuture.supplyAsync(() -> {
+                try {
+                    return callable.call();
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+        };
 
-        if (attempt > maxAttempts) {
-            return CompletableFuture.failedFuture(
-                new RuntimeException("Failed after " + maxAttempts +
-                    " attempts", lastError));
+        ScheduledExecutorService es = Executors.newScheduledThreadPool(2);
+
+        CompletableFuture<Integer>cf=retry_with_exponential_backoff(3, es, 1000, 2, 5000, supplier);
+
+        try{
+            cf.thenAccept(v->System.out.println(v)).exceptionally(ex->{System.out.println(ex);return null;});
+            cf.join();
+        }catch(Exception e){
+            // System.out.println(e);
+        }finally{
+            es.shutdown();
+            es.close();;
         }
 
-        return operation.get().handle((result, ex) -> {
-            if (ex == null) {
-                return CompletableFuture.completedFuture(result);
-            }
 
-            // Check if error is retryable
-            if (!isRetryable(ex)) {
-                return CompletableFuture.<T>failedFuture(ex);
-            }
-
-            // log.warn("Attempt {} failed, retrying in {}ms: {}",
-            //     attempt, delay.toMillis(), ex.getMessage());
-
-            // Schedule retry after delay
-            CompletableFuture<T> retryFuture = new CompletableFuture<>();
-            scheduler.schedule(() -> {
-                attemptWithRetry(operation, maxAttempts,
-                    Duration.ofMillis((long)(delay.toMillis() * multiplier)),
-                    multiplier, attempt + 1, ex)
-                    .whenComplete((r, e) -> {
-                        if (e != null) retryFuture.completeExceptionally(e);
-                        else retryFuture.complete(r);
-                    });
-            }, delay.toMillis(), TimeUnit.MILLISECONDS);
-
-            return retryFuture;
-        }).thenCompose(Function.identity());
     }
 
-    private static boolean isRetryable(Throwable ex) {
-        // Retry on transient errors, not on validation errors
-        Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
-        return cause instanceof IOException
-            || cause instanceof TimeoutException
-           ;
+    static <T> CompletableFuture<T> retry_with_exponential_backoff(
+            int nRetries,
+            ScheduledExecutorService es,
+            long retyAfter,
+            int backoff,
+            long apiTimeout,
+            Supplier<CompletableFuture<T>> supplier) {
+        return supplier.get().orTimeout(apiTimeout, TimeUnit.MILLISECONDS)
+                .handle((res, ex) -> {
+                    if (ex == null)
+                        return CompletableFuture.completedFuture(res);
+                    if(nRetries<=0) return CompletableFuture.<T>failedFuture(ex);
+
+                    System.out.println("Failed due to "+ex.getClass()+" NRetries Remaining: "+(nRetries-1));
+
+                    CompletableFuture<T> retryFuture = new CompletableFuture<>();
+
+                    es.schedule(() -> {
+                        return retry_with_exponential_backoff(nRetries-1, es, retyAfter*backoff, backoff, apiTimeout, supplier)
+                        .whenComplete((result,exception)->{
+                            if(exception==null) retryFuture.complete(result);
+                            else retryFuture.completeExceptionally(exception);
+                        });
+                    }, retyAfter , TimeUnit.MILLISECONDS);
+
+                    return retryFuture;
+                })
+                .thenCompose(x -> x);
+    }
+
+    static void sleep(long dur) {
+        try {
+            Thread.sleep(dur);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        }
     }
 }
