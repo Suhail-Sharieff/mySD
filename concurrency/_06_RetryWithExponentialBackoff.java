@@ -1,5 +1,6 @@
 package concurrency;
 
+import java.time.LocalTime;
 import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
@@ -33,7 +34,7 @@ public class _06_RetryWithExponentialBackoff {
         Random rand = new Random();
         Callable<Integer> callable = () -> {
             int r = rand.nextInt(4990, 6000);
-            System.out.println(r);
+            System.out.println(r+" at t="+LocalTime.now().getSecond());
             if (r % 2 == 0)
                 throw new RuntimeException("Some server error occured");
             else
@@ -79,8 +80,7 @@ public class _06_RetryWithExponentialBackoff {
             long timeOutDuration) throws InterruptedException, ExecutionException {
         // ****MISTAKE: add below commented code here, it runs multiple times else */
         // if (nRetries <= 0)
-        // return CompletableFuture.failedFuture(new RuntimeException("Failed after max
-        // reties!"));
+        // return CompletableFuture.failedFuture(new RuntimeException("Failed after max reties! t="+LocalTime.now().getSecond()));
         return supplier.get().orTimeout(timeOutDuration, TimeUnit.MILLISECONDS)
                 .handle(
                         (res, ex) -> {
@@ -92,22 +92,27 @@ public class _06_RetryWithExponentialBackoff {
 
                             System.out.println("Failed to get due to "
                                     + ((ex instanceof TimeoutException) ? "Time out " : ex.getMessage())
-                                    + ". Retrying...");
+                                    + ". Retrying in "+retryAfter+" milliseconds...! t="+LocalTime.now().getSecond());
                             CompletableFuture<T> retryFuture = new CompletableFuture<>();
 
                             es.schedule(() -> {
+                                
+                                try {
+                                    //mistake: added `return retryWithExpo...(), it dowsnt wait for next retry then, it immeidtely starts, coz it u add return, it becomes callable, but we want runnable here
+                                    retryWithExponentialBackoffFuture(backoffFactor, nRetries - 1, supplier, es,
+                                            retryAfter * backoffFactor, timeOutDuration)
+                                            .whenComplete((r, e) -> {
 
-                                return retryWithExponentialBackoffFuture(backoffFactor, nRetries - 1, supplier, es,
-                                        retryAfter * backoffFactor, timeOutDuration)
-                                        .whenComplete((r, e) -> {
+                                                if (e == null)
+                                                    retryFuture.complete(r);
+                                                else {
+                                                    retryFuture.completeExceptionally(e);
+                                                }
 
-                                            if (e == null)
-                                                retryFuture.complete(r);
-                                            else {
-                                                retryFuture.completeExceptionally(e);
-                                            }
-
-                                        });
+                                            });
+                                } catch (Exception e) {
+                                    // retryFuture.completeExceptionally(e);
+                                }
 
                             }, retryAfter, TimeUnit.MILLISECONDS);
 
