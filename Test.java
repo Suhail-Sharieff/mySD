@@ -9,7 +9,7 @@ public class Test {
         Random rand = new Random();
 
         Callable<Integer> callable = () -> {
-            int r = rand.nextInt(4900, 5000);
+            int r = rand.nextInt(4990, 6000);
             System.out.println(r);
             if (r % 2 == 0)
                 throw new RuntimeException("Some server error occured!");
@@ -45,36 +45,54 @@ public class Test {
 
 
     }
+static <T> CompletableFuture<T> retry_with_exponential_backoff(
+        int retries,
+        ScheduledExecutorService es,
+        long delay,
+        int backoff,
+        long timeout,
+        Supplier<CompletableFuture<T>> supplier) {
 
-    static <T> CompletableFuture<T> retry_with_exponential_backoff(
-            int nRetries,
-            ScheduledExecutorService es,
-            long retyAfter,
-            int backoff,
-            long apiTimeout,
-            Supplier<CompletableFuture<T>> supplier) {
-        return supplier.get().orTimeout(apiTimeout, TimeUnit.MILLISECONDS)
-                .handle((res, ex) -> {
-                    if (ex == null)
-                        return CompletableFuture.completedFuture(res);
-                    if(nRetries<=0) return CompletableFuture.<T>failedFuture(ex);
+    CompletableFuture<T> result = new CompletableFuture<>();
 
-                    System.out.println("Failed due to "+ex.getClass()+" NRetries Remaining: "+(nRetries-1));
+    attempt(result, retries, es, delay, backoff, timeout, supplier);
 
-                    CompletableFuture<T> retryFuture = new CompletableFuture<>();
+    return result;
+}
 
-                    es.schedule(() -> {
-                        return retry_with_exponential_backoff(nRetries-1, es, retyAfter*backoff, backoff, apiTimeout, supplier)
-                        .whenComplete((result,exception)->{
-                            if(exception==null) retryFuture.complete(result);
-                            else retryFuture.completeExceptionally(exception);
-                        });
-                    }, retyAfter , TimeUnit.MILLISECONDS);
+static <T> void attempt(
+        CompletableFuture<T> result,
+        int retries,
+        ScheduledExecutorService es,
+        long delay,
+        int backoff,
+        long timeout,
+        Supplier<CompletableFuture<T>> supplier) {
 
-                    return retryFuture;
-                })
-                .thenCompose(x -> x);
-    }
+    es.schedule(() -> {
+        supplier.get()
+            .orTimeout(timeout, TimeUnit.MILLISECONDS)
+            .whenComplete((res, ex) -> {
+
+                if (ex == null) {
+                    result.complete(res);
+                    return;
+                }
+
+                if (retries <= 0) {
+                    result.completeExceptionally(ex);
+                    return;
+                }
+
+                System.out.println("Retrying after delay: " + delay);
+
+                attempt(result, retries - 1, es,
+                        delay * backoff, backoff, timeout, supplier);
+
+            });
+
+    }, delay, TimeUnit.MILLISECONDS);
+}
 
     static void sleep(long dur) {
         try {
