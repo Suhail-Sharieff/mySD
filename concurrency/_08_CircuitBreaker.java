@@ -5,7 +5,6 @@ import java.time.LocalTime;
 import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -43,7 +42,7 @@ public class _08_CircuitBreaker {
             3, //shift from half open to closed only after 3 successes
             Duration.ofMillis(3000),//make consequtive calls by this much in half open
             schedulr,
-            Duration.ofMillis(5000)
+            Duration.ofMillis(5000)//time under which Api should return response
         );
 
 
@@ -66,124 +65,66 @@ public class _08_CircuitBreaker {
     
     static enum State{
         OPEN,
-        HALF_CLOSED,
+        HALF_OPEN,
         CLOSED
     }
 
 
+    /*
+    CLOSED --(failures >= threshold)--> OPEN
+    OPEN --(after wait)--> HALF_OPEN
+    HALF_OPEN --(successes >= N)--> CLOSED
+    HALF_OPEN --(failure)--> OPEN
+    */
+
+
     static class CircuitBreaker<T>{
 
-        private final int failureRateThreshold;//aftr how many failures it shud enter OPEN
-        private final Duration waitDurationInOpenState;//how long it shud be in OPEN once it enters it
-        private final int permittedNumberOfCallsInHalfOpenState;//how many calls shud it try in half open state bfr entering CLOSED
-        private AtomicReference<State>currState=new AtomicReference<State>(State.CLOSED);
+        private final int threshold_count_closed_to_open;
+        private final int threshold_count_open_to_HalfOpen;
+        private final Duration apiTimout;
+
+        private final AtomicReference<State> currState=new AtomicReference<>(State.CLOSED);
         private final AtomicInteger failureCount=new AtomicInteger(0);
-        private final AtomicInteger testCountInHalfOpenState=new AtomicInteger(0);
-        private final ScheduledExecutorService scheduler;
-        private final Duration waitDurationBtwHalfOpenStateReties;
-        private final Duration apiTimeout;
+        private final AtomicInteger successCount=new AtomicInteger(0);        
+        
 
 
-        public CircuitBreaker(int failureRateThreshold, Duration waitDurationInOpenState,
-                int permittedNumberOfCallsInHalfOpenState,
-                Duration waitDurationBtwOpenStateReties,ScheduledExecutorService scheduler,Duration apiTimout) {
-            this.failureRateThreshold = failureRateThreshold;
-            this.waitDurationInOpenState = waitDurationInOpenState;
-            this.permittedNumberOfCallsInHalfOpenState = permittedNumberOfCallsInHalfOpenState;
-            this.waitDurationBtwHalfOpenStateReties=waitDurationBtwOpenStateReties;
-            this.scheduler=scheduler;
-            this.apiTimeout=apiTimout;
+        
+
+         
+
+        public CircuitBreaker(int threshold_closed_to_open, int threshold_open_to_HalfOpen,
+                Duration apiTimout) {
+            this.threshold_count_closed_to_open = threshold_closed_to_open;
+            this.threshold_count_open_to_HalfOpen = threshold_open_to_HalfOpen;
+            this.apiTimout = apiTimout;
         }
 
+
+
+
+
+
+
         public CompletableFuture<T> execute(Supplier<CompletableFuture<T>>supplier){
-            return supplier.get().orTimeout(apiTimeout.toMillis(), TimeUnit.MILLISECONDS)
-            .handle((res,ex)->{
-                //we hv got response without exception (means v r in Closed or half closed)
-                if(ex==null){
-                    println("No exception was thrown!");
-                    //case1: if v r in closed state no issue
-                    if(currState.get().equals(State.CLOSED)) {
-                        println("In Closed state, returning result!");
-                        return CompletableFuture.<T>completedFuture(res);
-                    }
-
-                    //case2: if v r in half open state
-                    if(currState.get().equals(State.HALF_CLOSED)){
-                    //----subcase1: v already did permittedNumberOfCallsInHalfOpenState, then jump to closed,also reset testcount to 0 
-                        println("In half closed state");
-                        if(testCountInHalfOpenState.get()>=permittedNumberOfCallsInHalfOpenState){
-                            println("Tested in half closed state for "+testCountInHalfOpenState+" times, works, returning result!");
-
-                            testCountInHalfOpenState.set(0);
-                            currState.set(State.CLOSED);
-
-                            return CompletableFuture.completedFuture(res);
-                        }
-
-                    //----subcase2: v havent performed permittedcalls, so retry, but dont reset testcount value
-                        println("Received result in half closed state, but cannot shift to closed state coz still need to test "+(permittedNumberOfCallsInHalfOpenState-testCountInHalfOpenState.get())+" times!");
-                    }
-
-                    //case3: no chance of reciving response in Open state, so no handling needed
-
-                }   
-                println("EXCEPTION "+ex);
-                //case2: v hv got an exception (so again v must be in Closed or Half closed)
-                //----subcase1: v r in closed state, somthng is wrong, so mv to half closed
-                if(currState.get().equals(State.CLOSED) || currState.get().equals(State.HALF_CLOSED)){
-                        if(currState.get().equals(State.CLOSED)){
-                        failureCount.incrementAndGet();
-                        currState.set(State.HALF_CLOSED);
-                        println("Exception was recvd in CLOSED state, shifting to HALF_CLOSED");
-                    }else if(currState.get().equals(State.HALF_CLOSED)){
-                        println("Exception was recvd in HALF_CLOSED");
-                    //-----subcase2: v r in half closed state
-                        failureCount.incrementAndGet();
-                        //case1: if failure count exceeds threshold, move to open state, set failure count to 0
-                        if(failureCount.get()>=failureRateThreshold){
-                            println("Failure count is above threshold, shifting to OPEN");
-                            currState.set(State.OPEN);
-                            failureCount.set(0);
-                        }
-                    }
-                    println("Retrying....");
-                    //retry:
-                    CompletableFuture<T>retryFuture=new CompletableFuture<>();
-                    scheduler.schedule(()->{
-                        execute(supplier).whenComplete((r,e)->{
-                            if(e==null){
-                                //retry succeeded
-                                retryFuture.complete(res);
-                            }else{
-                                retryFuture.completeExceptionally(e);
-                            }
-                        });
-                    }, waitDurationBtwHalfOpenStateReties.toMillis(), TimeUnit.MILLISECONDS);
-                    return retryFuture;
+            State state=currState.get();
+            switch(state){
+                case State.CLOSED->{
+                    return supplier.get().orTimeout(apiTimout.toMillis(), TimeUnit.MILLISECONDS).whenComplete((res,ex)->{
+                        //if exception occurs, retry for 
+                    });
                 }
-
-                //the state is open state
-                println("Exception recvd in OPEN state. Retrying..");
-                //then v need to retry after waitDurationInOpenState
-                
-                CompletableFuture<T>retryFuture=new CompletableFuture<>();
-                    scheduler.schedule(()->{
-                        execute(supplier).whenComplete((r,e)->{
-                            if(e==null){
-                                //retry succeeded
-                                failureCount.decrementAndGet();
-                                retryFuture.complete(res);
-                            }else{
-                                retryFuture.completeExceptionally(e);
-                            }
-                        });
-                    }, waitDurationInOpenState.toMillis(), TimeUnit.MILLISECONDS);
-                return retryFuture;
-
-
-            }).thenCompose(x->x);
-            
-            
+                case State.HALF_OPEN->{
+                    return null;
+                }
+                case State.OPEN->{
+                    return null;
+                }
+                default->{
+                    throw new RuntimeException("Invalid state: "+state);
+                }
+            }
         }
 
         
