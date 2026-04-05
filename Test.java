@@ -1,92 +1,52 @@
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
 
 public class Test {
 
-    static ReentrantLock lock = new ReentrantLock();
-    static Condition cond = lock.newCondition();
-    static int turn = 1;
-
     public static void main(String[] args) throws InterruptedException {
+        CyclicBarrier bar=new CyclicBarrier(3);
 
-        Thread a = new Thread(() -> {
+        var t1=new Thread(()->{
+            sleep(3000);
             try {
-                printFirst();
+                bar.await();//blocks THIS thread, untill other threads complee too
             } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (BrokenBarrierException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         });
-        Thread b = new Thread(() -> {
-            try {
-                printSecond();
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        });
-        Thread c = new Thread(() -> {
-            try {
-                printThird();
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        });
+        var t2=new Thread(()->{sleep(1000);try {
+            bar.await();
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (BrokenBarrierException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }});
+        var t3=new Thread(()->{sleep(2000);try {
+            bar.await();
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (BrokenBarrierException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }});
 
-        a.start();
-        ;
-        b.start();
-        c.start();
-        ;
 
-        a.join();
-        b.join();
-        c.join();
+        t1.start();t2.start();t3.start();
+       
+
+        t1.join();
+        t2.join();
+        t3.join();
 
     }
 
-    static void printFirst() throws InterruptedException {
-        lock.lock();
-        try {
-            while (turn != 1)
-                cond.await();
-            ;
-            System.out.println("first");
-            turn = 2;
-            cond.signal();
 
-        } finally {
-            lock.unlock();;
-        }
-    }
-
-    static void printSecond() throws InterruptedException {
-        lock.lock();
-        try {
-            while (turn != 2)
-                cond.await();
-            System.out.println("second");
-            turn=3;
-            cond.signal();
-
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    static void printThird() throws InterruptedException {
-        lock.lock();
-        try {
-            while (turn != 3)
-                cond.await();
-            System.out.println("third");
-            turn=0;
-            cond.signal();
-
-        } finally {
-            lock.unlock();
-        }
-    }
-
+    static void sleep(long dur){try{Thread.sleep(dur);}catch(InterruptedException ex){}}
 }

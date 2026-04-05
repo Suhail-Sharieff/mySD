@@ -42,7 +42,7 @@ public class _04_GridComputation {
                             process(i, i+1, j, j+1);
                             sleep(rand.nextLong(100,200));
                             System.out.println("thread "+tid+" completed filling matrix from {"+i+","+j+"} to {"+(i+1)+","+(j+1)+"}");
-                            cb.await();//waits till all 3 threads have completed processng this block
+                            cb.await();//THIS THREAD (not main thread)waits till all 3 threads have completed processng this block
                         }
                     }
                 }catch(Exception ex){}

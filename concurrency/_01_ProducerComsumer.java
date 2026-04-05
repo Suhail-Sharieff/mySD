@@ -58,15 +58,17 @@ public class _01_ProducerComsumer {
     static class Way2{
         static Queue<Integer> q=new LinkedList<>();
         static ReentrantLock lock=new ReentrantLock();
-        static Condition notFull=lock.newCondition();
-        static Condition notEmpty=lock.newCondition();
+
+        //used 2 condition, one for producer , the other for c0onsumer, actually v can use single conditinn, but then we need to use signalAll(), sinc v can hv multiple producers and cnsumers, all wake up and onyl 1 acquries lock, since v are waking up all, its very inefficient and useless, so by making 2 locks v ensure that producer wakes up consumers and consumers wake up producers
+        static Condition producer=lock.newCondition();
+        static Condition consumer=lock.newCondition();
         static int maxCap=10;
         void put(int x) throws InterruptedException{
-            lock.lock();
+            lock.lock();    
             try{
-                while(q.size()==maxCap) notFull.await();
+                while(q.size()==maxCap) producer.await();//if max cap, it releases lock here itself, locks again when woke up, chks condition again(coz its while loop), if satisfies, continues, in finally releases lock
                 q.offer(x);
-                notEmpty.signal();
+                consumer.signal();//no need of signallAll() coz theere is only 1 othr thread, ie consumer
             }finally{
                 lock.unlock();
             }
@@ -74,9 +76,9 @@ public class _01_ProducerComsumer {
         int poll() throws InterruptedException{
             lock.lock();
             try{
-                while(q.isEmpty()) notEmpty.await();
+                while(q.isEmpty()) consumer.await();
                 int v=q.poll();
-                notFull.signal();
+                producer.signal();
                 return v;
             }finally{
                 lock.unlock();
