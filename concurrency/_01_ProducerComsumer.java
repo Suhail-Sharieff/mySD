@@ -1,7 +1,11 @@
 package concurrency;
 
 import java.time.LocalTime;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class _01_ProducerComsumer {
     public static void main(String[] args) throws InterruptedException {
@@ -46,6 +50,38 @@ public class _01_ProducerComsumer {
 
     static void sleep(int ms){
         try{Thread.sleep(ms);}catch(InterruptedException ex){}
+    }
+
+
+
+
+    static class Way2{
+        static Queue<Integer> q=new LinkedList<>();
+        static ReentrantLock lock=new ReentrantLock();
+        static Condition notFull=lock.newCondition();
+        static Condition notEmpty=lock.newCondition();
+        static int maxCap=10;
+        void put(int x) throws InterruptedException{
+            lock.lock();
+            try{
+                while(q.size()==maxCap) notFull.await();
+                q.offer(x);
+                notEmpty.signal();
+            }finally{
+                lock.unlock();
+            }
+        }
+        int poll() throws InterruptedException{
+            lock.lock();
+            try{
+                while(q.isEmpty()) notEmpty.await();
+                int v=q.poll();
+                notFull.signal();
+                return v;
+            }finally{
+                lock.unlock();
+            }
+        }
     }
 }
 /*
