@@ -1,100 +1,67 @@
-interface AtmBehaviour{
-    void step1();
-    void step2();
-    void step3();
+//chain of responsibuliyy
+
+
+interface MiddlewareFunc{
+    boolean pass(String s);
 }
-class Atm{
-    AtmBehaviour currState;
-    public Atm(){this.currState=new FirstState(this);}
-    void step1(){currState.step1();}
-    void step2(){currState.step2();}
-    void step3(){currState.step3();}
-    void setState(AtmState newState){currState=newState;}
-}
-abstract class AtmState implements AtmBehaviour{
-    protected final Atm atm;
-    public AtmState(Atm mc) {
-        this.atm=mc;
+
+abstract class Middleware implements MiddlewareFunc{
+    protected Middleware nxt;
+    public boolean check(String s){
+        if(nxt==null) return pass(s);
+        if(pass(s)) return nxt.check(s);
+        return false;
     }
 }
 
 
-class FirstState extends AtmState{
-
-    public FirstState(Atm mc) {
-        super(mc);
-    }
+class Chck1 extends Middleware{
 
     @Override
-    public void step1() {
-        System.out.println("Step 1 complete");
-        atm.setState(new SecondState(atm));
+    public boolean pass(String s) {
+        if(s.contains("key1")){
+            System.out.println("chk1 pass");
+            return true;
+        }
+        System.out.println("chk1 fail");
+        return false;
     }
 
-    @Override
-    public void step2() {
-        System.out.println("Complete step1 firt");
-    }
+}
+class Chck2 extends Middleware{
 
     @Override
-    public void step3() {
-        System.out.println("Complete step1 first");        
+    public boolean pass(String s) {
+        if(s.contains("key2")){
+            System.out.println("chk2 pass");
+            return true;
+        }
+        System.out.println("chk2 fail");
+        return false;
+    }
+
+}
+class Chck3 extends Middleware{
+    @Override
+    public boolean pass(String s) {
+        if(s.contains("key3")){
+            System.out.println("chk3 pass");
+            return true;
+        }
+        System.out.println("chk3 fail");
+        return false;
     }
 }
-class SecondState extends AtmState{
 
-    public SecondState(Atm mc) {
-        super(mc);
-    }
-
-    @Override
-    public void step1() {
-        System.out.println("Step 1 already done");
-    }
-
-    @Override
-    public void step2() {
-        System.out.println("step2 complete");
-        atm.setState(new ThirdState(atm));
-    }
-
-    @Override
-    public void step3() {
-        System.out.println("Complete step2 first");        
-    }
-}
-class ThirdState extends AtmState{
-
-    public ThirdState(Atm mc) {
-        super(mc);
-    }
-
-    @Override
-    public void step1() {
-        System.out.println("Step 1 already done");
-    }
-
-    @Override
-    public void step2() {
-        System.out.println("Step 2 already done");
-    }
-
-    @Override
-    public void step3() {
-        System.out.println("step3 complete");        
-        atm.setState(new FirstState(atm));
-    }
-}
 public class Test {
 
     public static void main(String[] args) {
-        Atm atm=new Atm();
+        Middleware mw=new Chck1();
+        mw.nxt=new Chck2();
+        mw.nxt.nxt=new Chck3();
 
-        atm.step1();
-        atm.step2();
-        atm.step3();
+        System.out.println(mw.check("key1 key2"));
 
-        atm.step2();;
 
     }
 }
