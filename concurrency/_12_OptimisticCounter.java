@@ -1,12 +1,8 @@
+package concurrency;
+
 import java.util.concurrent.atomic.AtomicReference;
 
-public class Test {
-
-
-
-
-
-        
+public class _12_OptimisticCounter {
     public static void main(String[] args) throws InterruptedException {
 
         OptimisticLockCounter counter=new OptimisticLockCounter();
@@ -25,7 +21,7 @@ public class Test {
 
 
 
-    static class OptimisticLockCounter{
+    static class OptimisticLockCounter{//uses no locks, jus CAS(compare n set), whenver a thread wants to modify data (here incrVal()), it compares the state it knows with the actual version, if match, set new State, else try again
 
 
         record CounterState(int val,int version){}//so that v dont have to manualy impl equals(Counter state o){return o.val==this.val && o.version==this.version;}, record will handle that

@@ -63,7 +63,7 @@ public class _11_SafeBankTransfer {
             }
         });
 
-
+        //just using pessissimistic locking, ie locking every stuff bfr modifying or reading it making it atomic oprs
         //sender sends 2 transactions simultaneously, one of 50 , other of 30, his balnce must be 20
 
         transaction1.start();
@@ -74,6 +74,18 @@ public class _11_SafeBankTransfer {
 
         System.out.println("balance of sender : "+sender.balance);//20
 
+
+        /*
+        acquiredlock on FROM acccount...
+        acuiredlock on TO account...
+        Releasing TO lock
+        Releasing FROM lock
+        acquiredlock on FROM acccount...
+        acuiredlock on TO account...
+        Releasing TO lock
+        Releasing FROM lock
+        balance of sender : 20
+        git push */
 
 
 
