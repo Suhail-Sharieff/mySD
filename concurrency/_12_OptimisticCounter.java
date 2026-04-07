@@ -41,7 +41,7 @@ public class _12_OptimisticCounter {
                 presentState=currState.get();
                 int currVal=presentState.val,currVersion=presentState.version;
                 newState=new CounterState(currVal+1, currVersion+1);
-            }while(!currState.compareAndSet(presentState, newState));//see that v hvnt used locks anywhere, v just compare with prev state and set it to new state, it compares internally using equals()
+            }while(!currState.compareAndSet(presentState, newState));//see that v hvnt used locks anywhere, v just compare with prev state and set it to new state, it compares internally using equals(), retries, YES, it does waste CPU cycles, so use when thrd contention is low and retry actions are cheap
 
             return true;
         }
