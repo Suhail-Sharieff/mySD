@@ -1,54 +1,83 @@
-import java.util.concurrent.atomic.AtomicReference;
+//custom predicate
 
 public class Test {
 
 
 
 
+    public static void main(String[] args) {
 
+        PricePredicate price=new PricePredicate();
+        Item itm=new Item(99, false);
+        System.out.println(price.pass(itm));
         
-    public static void main(String[] args) throws InterruptedException {
-
-        OptimisticLockCounter counter=new OptimisticLockCounter();
-
-        Thread threads[]=new Thread[100];
-        for(int i=0;i<threads.length;i++) threads[i]=new Thread(()->counter.incrVal());
-
-        for(Thread t:threads) t.start();
-
-        for(Thread t:threads) t.join();
-
-        System.out.println(counter.getVal());//ans is 100 always
-
-
     }
+}
+
+
+interface CustomPredicate<T>{
+    boolean pass(T item);
+    default CustomPredicate<T> or(CustomOrPredicate<T> other){return new CustomOrPredicate<>(this,other);}
+    default CustomPredicate<T> and(CustomOrPredicate<T> other){return new CustomAndPredicate<>(this,other);}
+    default CustomPredicate<T> not(){return new CustomNotPredicate<>(this);}
+}
+class CustomOrPredicate<T> implements CustomPredicate<T>{
+    private final CustomPredicate<T> first;
+    private final CustomPredicate<T> second;
+    public CustomOrPredicate(CustomPredicate<T> first, CustomPredicate<T> second) {
+        this.first = first;
+        this.second = second;
+    }
+    @Override
+    public boolean pass(T item) {
+        return first.pass(item) && second.pass(item);
+    }
+}
+
+class CustomAndPredicate<T> implements CustomPredicate<T>{
+    private final CustomPredicate<T> first;
+    private final CustomPredicate<T> second;
+    public CustomAndPredicate(CustomPredicate<T> first, CustomPredicate<T> second) {
+        this.first = first;
+        this.second = second;
+    }
+    @Override
+    public boolean pass(T item) {
+        return first.pass(item) && second.pass(item);
+    }
+}
+class CustomNotPredicate<T> implements CustomPredicate<T>{
+    private final CustomPredicate<T> curr;
+    public CustomNotPredicate(CustomPredicate<T> curr) {
+        this.curr = curr;
+    }
+    @Override
+    public boolean pass(T item) {
+        return !curr.pass(item);
+    }
+}
 
 
 
-    static class OptimisticLockCounter{
+class PricePredicate implements CustomPredicate<Item>{
+
+    @Override
+    public boolean pass(Item item) {
+        return item.price<=100;
+    }
+    
+}
 
 
-        record CounterState(int val,int version){}//so that v dont have to manualy impl equals(Counter state o){return o.val==this.val && o.version==this.version;}, record will handle that
-        private final AtomicReference<CounterState>currState;
 
-        
-        public OptimisticLockCounter() {
-            currState=new AtomicReference<>(new CounterState(0, 0));
-        }
-        public int getVal() {
-            return currState.get().val;
-        }
-        public boolean incrVal() {
-            CounterState newState;
-            CounterState presentState;
-            do{
-                presentState=currState.get();
-                int currVal=presentState.val,currVersion=presentState.version;
-                newState=new CounterState(currVal+1, currVersion+1);
-            }while(!currState.compareAndSet(presentState, newState));//see that v hvnt used locks anywhere, v just compare with prev state and set it to new state, it compares internally using equals()
 
-            return true;
-        }
-       
+
+
+class Item{
+    int price;
+    boolean isInStock;
+    public Item(int price,boolean isInStock){
+        this.isInStock=isInStock;
+        this.price=price;
     }
 }
