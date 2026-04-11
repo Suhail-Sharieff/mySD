@@ -29,6 +29,8 @@ public class _03_Starvation {
         LP_T1 WAITING...
         LP_T1 got LOCK! */
 
+        System.out.println(counter.getCount());
+
 
     }
 

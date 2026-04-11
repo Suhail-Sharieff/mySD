@@ -10,10 +10,13 @@ public class _01_Deadlock {
         public void bowBack(Bower other){synchronized(other){System.out.println(other.name+" bowed back to "+this.name);}}
     }
 
+    @SuppressWarnings("unused")
     private static class SolvedBower{
         public final String name;
+        @SuppressWarnings("unused")
         public  SolvedBower(String name){this.name=name;}
         public final ReentrantLock lock=new ReentrantLock();
+        @SuppressWarnings("unused")
         public void bow(SolvedBower other){
             while(true){
                 if(this.lock.tryLock()){
