@@ -1,0 +1,111 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.6 Chrome/144.0.7559.236 Electron/40.8.4 Safari/537.36" version="29.6.6">
+  <diagram name="Page-1" id="xX_oUbynkYKgflj_e12t">
+    <mxGraphModel dx="1775" dy="661" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" background="none" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="GiE_XUCYoKA_VxyG8doZ-36" edge="1" parent="1" source="GiE_XUCYoKA_VxyG8doZ-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;endArrow=none;endFill=0;startArrow=diamond;startFill=0;" target="GiE_XUCYoKA_VxyG8doZ-35">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="GiE_XUCYoKA_VxyG8doZ-37" connectable="0" parent="GiE_XUCYoKA_VxyG8doZ-36" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="has A&lt;div&gt;1:N&lt;/div&gt;" vertex="1">
+          <mxGeometry relative="1" x="-0.1438" y="-2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="GiE_XUCYoKA_VxyG8doZ-40" edge="1" parent="1" source="GiE_XUCYoKA_VxyG8doZ-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.451;entryY=-0.007;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.448;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;endArrow=none;endFill=0;startArrow=diamondThin;startFill=1;" target="GiE_XUCYoKA_VxyG8doZ-39" value="has A&lt;div&gt;1:N&lt;/div&gt;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="160" y="440" as="sourcePoint" />
+            <mxPoint x="182.5" y="450" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="GiE_XUCYoKA_VxyG8doZ-42" edge="1" parent="1" source="GiE_XUCYoKA_VxyG8doZ-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;startArrow=diamondThin;startFill=1;" target="GiE_XUCYoKA_VxyG8doZ-41">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="GiE_XUCYoKA_VxyG8doZ-43" connectable="0" parent="GiE_XUCYoKA_VxyG8doZ-42" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="has A&lt;div&gt;1:N&lt;/div&gt;" vertex="1">
+          <mxGeometry relative="1" x="0.096" y="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="GiE_XUCYoKA_VxyG8doZ-2" parent="1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;Game&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;+turn : Enum&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;+positionStarategy: List&amp;lt;PositionStrtegy&amp;gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;+ winStartegy : List&amp;lt;WinningStrategy&amp;gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;+drawStrtegy : List&amp;lt;DrawStartegy&amp;gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;+board: Board&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;+players: Deque&amp;lt;Player&amp;gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;+move(i,j) :: void&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;+reset() :: void&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;br&gt;&lt;/p&gt;" vertex="1">
+          <mxGeometry height="230" width="290" x="30" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="GiE_XUCYoKA_VxyG8doZ-32" parent="1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;Board&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;- size : int&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;- mat : Cell[sz][sz]&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;+ getRow(i)&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;+&amp;nbsp; getCol(j)&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;+ isFull()&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;br&gt;&lt;/p&gt;" vertex="1">
+          <mxGeometry height="190" width="180" x="470" y="10" as="geometry" />
+        </mxCell>
+        <mxCell id="GiE_XUCYoKA_VxyG8doZ-33" edge="1" parent="1" source="GiE_XUCYoKA_VxyG8doZ-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.677;entryDx=0;entryDy=0;entryPerimeter=0;startArrow=diamond;startFill=0;endArrow=none;endFill=0;" target="GiE_XUCYoKA_VxyG8doZ-32">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="GiE_XUCYoKA_VxyG8doZ-34" connectable="0" parent="GiE_XUCYoKA_VxyG8doZ-33" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="has A&lt;div&gt;1:1&lt;/div&gt;" vertex="1">
+          <mxGeometry relative="1" x="0.1319" y="-1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="GiE_XUCYoKA_VxyG8doZ-35" parent="1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;Player&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;- score : int&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;- name :&amp;nbsp; string&lt;/p&gt;" vertex="1">
+          <mxGeometry height="70" width="180" x="400" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="GiE_XUCYoKA_VxyG8doZ-39" parent="1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;&amp;lt;&amp;lt;Winning Strategy&amp;gt;&amp;gt;&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;&lt;br&gt;&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;+ isWin(Board) :: boolean&amp;nbsp;&lt;/p&gt;" vertex="1">
+          <mxGeometry height="90" width="180" x="180" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="GiE_XUCYoKA_VxyG8doZ-41" parent="1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;&amp;lt;&amp;lt;Draw Strtegy&amp;gt;&amp;gt;&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;&lt;br&gt;&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;+ isDraw(Board) :: boolean&lt;/p&gt;" vertex="1">
+          <mxGeometry height="90" width="180" x="-50" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="GiE_XUCYoKA_VxyG8doZ-45" parent="1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;My Draw Strategy&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;&lt;br&gt;&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;+ isDraw(Board) :: boolean&lt;/p&gt;" vertex="1">
+          <mxGeometry height="90" width="180" x="-50" y="690" as="geometry" />
+        </mxCell>
+        <mxCell id="GiE_XUCYoKA_VxyG8doZ-47" edge="1" parent="1" source="GiE_XUCYoKA_VxyG8doZ-45" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="GiE_XUCYoKA_VxyG8doZ-41" value="">
+          <mxGeometry relative="1" width="160" as="geometry">
+            <mxPoint x="-30" y="730" as="sourcePoint" />
+            <mxPoint x="130" y="730" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="GiE_XUCYoKA_VxyG8doZ-48" connectable="0" parent="GiE_XUCYoKA_VxyG8doZ-47" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="implements" vertex="1">
+          <mxGeometry relative="1" x="0.075" y="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="GiE_XUCYoKA_VxyG8doZ-51" edge="1" parent="1" source="GiE_XUCYoKA_VxyG8doZ-49" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;endArrow=block;endFill=0;" target="GiE_XUCYoKA_VxyG8doZ-39" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="GiE_XUCYoKA_VxyG8doZ-52" connectable="0" parent="GiE_XUCYoKA_VxyG8doZ-51" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="implements" vertex="1">
+          <mxGeometry relative="1" x="-0.3256" y="3" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="GiE_XUCYoKA_VxyG8doZ-49" parent="1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;Row Winning Strategy&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;&lt;br&gt;&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;+ isDraw(Board) :: boolean&lt;/p&gt;" vertex="1">
+          <mxGeometry height="90" width="180" x="460" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="GiE_XUCYoKA_VxyG8doZ-54" edge="1" parent="1" source="GiE_XUCYoKA_VxyG8doZ-53" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=0;dashed=1;" target="GiE_XUCYoKA_VxyG8doZ-39" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="GiE_XUCYoKA_VxyG8doZ-55" connectable="0" parent="GiE_XUCYoKA_VxyG8doZ-54" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="impelements" vertex="1">
+          <mxGeometry relative="1" x="-0.4929" y="2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="GiE_XUCYoKA_VxyG8doZ-53" parent="1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;Column Winning Strategy&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;&lt;br&gt;&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;+ isDraw(Board) :: boolean&lt;/p&gt;" vertex="1">
+          <mxGeometry height="90" width="180" x="410" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="GiE_XUCYoKA_VxyG8doZ-56" parent="1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;Diagonal Winning Strategy&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;&lt;br&gt;&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;+ isDraw(Board) :: boolean&lt;/p&gt;" vertex="1">
+          <mxGeometry height="90" width="180" x="370" y="730" as="geometry" />
+        </mxCell>
+        <mxCell id="GiE_XUCYoKA_VxyG8doZ-57" edge="1" parent="1" source="GiE_XUCYoKA_VxyG8doZ-56" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.326;entryY=1.013;entryDx=0;entryDy=0;entryPerimeter=0;dashed=1;endArrow=block;endFill=0;" target="GiE_XUCYoKA_VxyG8doZ-39">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="GiE_XUCYoKA_VxyG8doZ-58" connectable="0" parent="GiE_XUCYoKA_VxyG8doZ-57" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="impelments" vertex="1">
+          <mxGeometry relative="1" x="0.1851" y="1" as="geometry">
+            <mxPoint y="-1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="GiE_XUCYoKA_VxyG8doZ-59" parent="1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;Cell&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;- xPos: int&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;- yPos: int&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;- symbol :&amp;nbsp; char&lt;/p&gt;" vertex="1">
+          <mxGeometry height="80" width="180" x="780" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="GiE_XUCYoKA_VxyG8doZ-60" edge="1" parent="1" source="GiE_XUCYoKA_VxyG8doZ-32" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=-0.014;entryY=0.629;entryDx=0;entryDy=0;entryPerimeter=0;startArrow=diamond;startFill=1;endArrow=none;endFill=0;exitX=1.005;exitY=0.53;exitDx=0;exitDy=0;exitPerimeter=0;" target="GiE_XUCYoKA_VxyG8doZ-59" value="has A&lt;div&gt;1:N&lt;/div&gt;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="660" y="113.88" as="sourcePoint" />
+            <mxPoint x="780" y="200" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
