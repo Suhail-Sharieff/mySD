@@ -64,6 +64,19 @@ public class _01_ProducerComsumer {
         static Condition consumer=lock.newCondition();
         static int maxCap=10;
         void put(int x) throws InterruptedException{
+            /*
+            why cant we do like this:
+
+            while(q.size()==maxCap) producer.await()
+            //then lock
+            lock.lock()
+            try{...}finally{..unlock()}
+
+            Reason is to avoid Signalling problem, if u do like above, its possible that the signal() is called by producer() befrore the consumer starts to wait(), so since the signal is sent bfr waiting, consumer keeps waiting forever.
+            But lock.lock() will hold resource since we are waiting after locking right??
+            - No, when we call await(), it atomically releases lock(), so no worries, same working for synchrnozed+wait()+notify() also 
+            
+            */
             lock.lock();    
             try{
                 while(q.size()==maxCap) producer.await();//if max cap, it releases lock here itself, locks again when woke up, chks condition again(coz its while loop), if satisfies, continues, in finally releases lock
