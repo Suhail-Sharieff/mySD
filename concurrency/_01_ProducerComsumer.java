@@ -75,6 +75,9 @@ public class _01_ProducerComsumer {
             Reason is to avoid Signalling problem, if u do like above, its possible that the signal() is called by producer() befrore the consumer starts to wait(), so since the signal is sent bfr waiting, consumer keeps waiting forever.
             But lock.lock() will hold resource since we are waiting after locking right??
             - No, when we call await(), it atomically releases lock(), so no worries, same working for synchrnozed+wait()+notify() also 
+
+
+            And why while loop() and not if()? coz spurious wakeupps cn happen ie thread may be signalled by OS tho no  v didnt fo it, so in such case it checks again and goes to wait again
             
             */
             lock.lock();    
