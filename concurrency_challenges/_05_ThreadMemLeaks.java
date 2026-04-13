@@ -13,7 +13,7 @@ public class _05_ThreadMemLeaks {
         int maxTimeToKeepAnUnusedThreadInPool=5000;
 
         LinkedBlockingQueue<Runnable>queue=new LinkedBlockingQueue<>(100);
-        RejectedExecutionHandler handlerToHandleRejectedThreadsWhenPoolIsFull=new ThreadPoolExecutor.CallerRunsPolicy();//what to do when new threads arrive when pool is full
+        RejectedExecutionHandler handlerToHandleRejectedThreadsWhenPoolIsFull=new ThreadPoolExecutor.CallerRunsPolicy();//what to do when new threads arrive when pool reached max cap and queue is also full
 
         /*
         Policies:

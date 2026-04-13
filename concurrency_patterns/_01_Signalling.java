@@ -174,7 +174,7 @@ public class _01_Signalling {
 
 
     public static void main(String[] args) throws InterruptedException {
-        // Pattern1.main(args);
+        Pattern1.main(args);
         /*
         t=25 : Thread=initializer : initializer initing data
         t=25 : Thread=printer : waiting for someone to permit me inside to read data by calling relese
