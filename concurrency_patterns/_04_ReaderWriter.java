@@ -1,5 +1,6 @@
 package concurrency_patterns;
 
+import java.util.HashMap;
 import java.util.concurrent.Semaphore;
 
 import utils.MyUtils;
@@ -78,7 +79,7 @@ public class _04_ReaderWriter {
             r.join();
         for (Thread w : writers)
             w.join();
-
+       
 
         /*
         
