@@ -123,7 +123,7 @@ public class _01_Foobar {
             }
         }
         public static void main(String[] args) throws InterruptedException {
-             Way2 obj1 = new Way2(9);
+             Way2 obj1 = new Way2(1);
 
             Thread t1 = new Thread(() -> {
                 try {
