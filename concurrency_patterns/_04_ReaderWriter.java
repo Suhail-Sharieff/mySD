@@ -1,6 +1,5 @@
 package concurrency_patterns;
 
-import java.util.HashMap;
 import java.util.concurrent.Semaphore;
 
 import utils.MyUtils;
