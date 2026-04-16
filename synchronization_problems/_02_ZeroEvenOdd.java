@@ -99,7 +99,7 @@ public class _02_ZeroEvenOdd {
         }
 
         public static void main(String[] args) throws InterruptedException {
-            Way1 obj = new Way1(22);
+            Way2 obj = new Way2(22);
             Thread t1 = new Thread(() -> {
                 try {
                     obj.zero();
