@@ -124,14 +124,12 @@ public class _04_H20 {
             hydrogen.acquire();// ensures exactly 2 H enters inside
             System.out.print("H");
             barrier.await();
-            hydrogen.release();
         }
 
         public void oxygen() throws InterruptedException, BrokenBarrierException {
             oxygen.acquire();// exacly 1 O enters here
             System.out.print("O");
             barrier.await();
-            oxygen.release();
         }
 
         
