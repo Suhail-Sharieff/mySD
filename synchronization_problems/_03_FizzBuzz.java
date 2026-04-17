@@ -140,8 +140,10 @@ public class _03_FizzBuzz {
     // thinking is how to release particular sepahore,what if we create a function
     // that decides which sem to reease based on value of curr??
 
+    @SuppressWarnings("unused")
     private static class SemaphoreBAsedSoln {
 
+        @SuppressWarnings("unused")
         public static void main(String[] args) throws InterruptedException {
             SemaphoreBAsedSoln obj=new SemaphoreBAsedSoln(10);
             Thread fizz = new Thread(() -> {
