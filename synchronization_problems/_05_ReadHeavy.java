@@ -1,10 +1,15 @@
-package concurrency_patterns;
+package synchronization_problems;
 
 import java.util.concurrent.Semaphore;
 
 import utils.MyUtils;
 
-public class _04_ReaderWriter {
+
+//READER WRITER problem
+
+//the below code works fine for HeavyReads, but it can lead to writers continously starving or rarely get time to write, its solved in /synchronization_problems/_05_ReaderWriter.java
+
+public class _05_ReadHeavy {
     // we can use read write lock, but here ill use Semaphors, not Lock(mutex) coz
     // mutex allows only 1 thread to access a resource, sempahores allow multiple
 
@@ -14,7 +19,7 @@ public class _04_ReaderWriter {
     private final Semaphore writer = new Semaphore(1);
     private final Semaphore readLimmiter;
 
-    public _04_ReaderWriter(int data,int maxConcurrentReadsAllowed) {
+    public _05_ReadHeavy(int data,int maxConcurrentReadsAllowed) {
         this.data = data;
         this.readLimmiter=new Semaphore(maxConcurrentReadsAllowed);
     }
@@ -55,7 +60,7 @@ public class _04_ReaderWriter {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        _04_ReaderWriter rw = new _04_ReaderWriter(0,3);
+        _05_ReadHeavy rw = new _05_ReadHeavy(0,3);
 
         Thread[] readers = new Thread[20];
         Thread[] writers = new Thread[3];
