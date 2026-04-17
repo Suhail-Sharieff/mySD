@@ -21,6 +21,7 @@ public class _08_UnisexBathroom {
         UnFairBathRoom2.main(args);
         FairBathRoom.main(args);
         FairBathRoom2.main(args);
+        FairBathRoom3.main(args);
     }
 
 
@@ -403,6 +404,128 @@ public class _08_UnisexBathroom {
         public static void main(String[] args) throws InterruptedException {
             FairBathRoom2 bathroom = new FairBathRoom2();
             Thread male[] = new Thread[5];
+            Thread female[] = new Thread[3];
+            for (int i = 0; i < male.length; i++)
+                male[i] = new Thread(() -> {
+                    try {
+                        bathroom.maleEnter();
+                    } catch (InterruptedException ex) {
+                    }
+                }, "MALE[" + i + "]");
+            for (int i = 0; i < female.length; i++)
+                female[i] = new Thread(() -> {
+                    try {
+                        bathroom.femaleEnter();
+                    } catch (InterruptedException ex) {
+                    }
+                }, "FEMALE[" + i + "]");
+
+            for (int i = 0; i < Math.max(male.length, female.length); i++) {
+                if (i < female.length)
+                    female[i].start();
+                if (i < male.length)
+                    male[i].start();
+            }
+
+            for (Thread m : male)
+                m.join();
+            for (Thread f : female)
+                f.join();
+
+        }
+
+    }
+
+
+
+    //----------------------fair bathroom with limit on how many in bathroom at a time---uses same approach used in ./_05_ReadHeavy.java
+    /*
+
+    see at ma 2 ppl are entering at a time
+
+    t=32 : Thread=FEMALE[0] : FEMALE
+    t=35 : Thread=MALE[0] : MALE 
+    t=35 : Thread=MALE[2] : MALE 
+    t=37 : Thread=FEMALE[1] : FEMALE
+    t=37 : Thread=FEMALE[2] : FEMALE
+    t=40 : Thread=MALE[3] : MALE 
+    t=40 : Thread=MALE[1] : MALE 
+    t=42 : Thread=MALE[4] : MALE 
+    t=42 : Thread=MALE[5] : MALE 
+    t=44 : Thread=MALE[6] : MALE 
+    t=44 : Thread=MALE[7] : MALE 
+    t=46 : Thread=MALE[9] : MALE 
+    t=46 : Thread=MALE[8] : MALE
+    */
+    private static class FairBathRoom3{
+        public FairBathRoom3(int maxCapacityOfBathroom) {
+            this.ppl_Limitter=new Semaphore(maxCapacityOfBathroom);
+        }
+
+        private final Semaphore ppl_Limitter;
+
+
+        private final Semaphore emptyRoom=new Semaphore(1);//instead of calling it mutex, its beter to call emptyRoom
+
+        private int maleCount;
+        private final Semaphore maleCountLock=new Semaphore(1);
+
+        private int femaleCount;
+        private final Semaphore femaleCountLock=new Semaphore(1);
+
+        private final Semaphore queueService=new Semaphore(1,true);//to ensure fairensss
+
+
+
+        private void maleAcquire() throws InterruptedException{
+            queueService.acquire();
+            maleCountLock.acquire();
+            if(++maleCount==1) emptyRoom.acquire();
+            maleCountLock.release();
+            queueService.release();
+        }
+        private void maleRelease() throws InterruptedException{
+            maleCountLock.acquire();
+            if(--maleCount==0) emptyRoom.release();
+            maleCountLock.release();
+        }
+
+        private void femaleAcquire() throws InterruptedException{
+            queueService.acquire();
+            femaleCountLock.acquire();
+            if(++femaleCount==1) emptyRoom.acquire();
+            femaleCountLock.release();
+            queueService.release();
+        }
+        private void femaleRelease() throws InterruptedException{
+            femaleCountLock.acquire();
+            if(--femaleCount==0) emptyRoom.release();
+            femaleCountLock.release();
+        }
+
+
+
+        void maleEnter() throws InterruptedException{
+            ppl_Limitter.acquire();
+            maleAcquire();
+            MyUtils.println("MALE ");
+            MyUtils.sleep(2000);
+            maleRelease();
+            ppl_Limitter.release();
+        }
+        void femaleEnter() throws InterruptedException{
+            ppl_Limitter.acquire();
+            femaleAcquire();
+            MyUtils.println("FEMALE");
+            MyUtils.sleep(3000);
+            femaleRelease();
+            ppl_Limitter.release();
+        }
+
+
+        public static void main(String[] args) throws InterruptedException {
+            FairBathRoom3 bathroom = new FairBathRoom3(2);
+            Thread male[] = new Thread[10];
             Thread female[] = new Thread[3];
             for (int i = 0; i < male.length; i++)
                 male[i] = new Thread(() -> {
