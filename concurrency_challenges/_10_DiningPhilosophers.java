@@ -1,18 +1,22 @@
 package concurrency_challenges;
 
+import java.util.Arrays;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 import utils.MyUtils;
 
-public class _09_DiningPhilosophers {
+public class _10_DiningPhilosophers {
 
 
 
     public static void main(String[] args) throws InterruptedException {
         //i hv added while(true).. coz in PROD its continues, to test here, comment while(true), else face infinite loop
-        DeadLockSimulation.main(args);
-        Soln1.main(args);
-        Soln2.main(args);
+        // DeadLockSimulation.main(args);
+        // Soln1.main(args);
+        // Soln2.main(args);
+        Soln4.main(args);
     }
 
     // ------------------------------------Deadlock code--NOT a solution, just
@@ -352,5 +356,192 @@ git: 'add.' is not a git command. See 'git --help'.
 
 
     //in interviews, Soln2/Soln3 is enough, but follow up may be asked to make it fair+starvation free as well, then the blwo soln works its called Chandy/Misra soln
+
+    private static class Soln4{//Chandy Misra soln
+
+       
+
+        /*Algorithm:
+        
+        1> a fork is "isDirty" if it was used by some philosopher to eat
+        2> assume initially all forks are dirty(means each philosopher had eaten with them) and ith fork is held by ith philosopher
+        3> whenevr a philosopher wants to eat, he requests both forks(left and right) from his neighbors
+        4> if a neighbor holds a dirty fork, he will clean and immediatly give it to him
+        5> else he will first eat using that fork making it dirty, then clean and give him
+
+        void pickup(int pid){
+
+            int left=pid;
+            int right=(pid+1)%n;
+
+            //wait to get 2 forks
+            requestFork(left);
+            requestFork(right);
+            //now he has 2 clean forks
+
+            //eat
+
+            //now both are dirty, just release them if someone requests them
+            releaseIfRequested(left);
+            releaseIfRequested(right);
+        
+        }
+        
+
+        */
+
+
+       enum State { THINKING, HUNGRY, EATING }
+
+    private final int n;
+    private final State[] state;
+    
+    // Instead of checking if a fork is "free", we strictly track WHO owns it.
+    private final int[] forkOwner;
+    private final boolean[] isDirty;
+
+    // A SINGLE lock protects the entire table's state variables
+    private final ReentrantLock lock = new ReentrantLock();
+    private final Condition[] conditions;
+
+    public Soln4(int n) {
+        this.n = n;
+        this.state = new State[n];
+        this.forkOwner = new int[n];
+        this.isDirty = new boolean[n];
+        this.conditions = new Condition[n];
+
+        for (int i = 0; i < n; i++) {
+            state[i] = State.THINKING;
+            conditions[i] = lock.newCondition();
+
+            // CHANDY-MISRA INITIALIZATION:
+            // To prevent an initial deadlock, the graph of fork ownership MUST be acyclic (no circles).
+            // We give the fork to the philosopher with the lower ID.
+            // Philosopher 0 will start holding both Fork 0 and Fork n-1. 
+            int leftPhilosopher = i;
+            int rightPhilosopher = (i + 1) % n;
+            forkOwner[i] = Math.min(leftPhilosopher, rightPhilosopher);
+            
+            // All forks start dirty so they can be immediately requested and handed over
+            isDirty[i] = true; 
+        }
+    }
+
+    public void pickup(int pid) throws InterruptedException {
+        // ALWAYS wrap state changes in the lock
+        lock.lock();
+        try {
+            state[pid] = State.HUNGRY;
+            int leftFork = pid;
+            int rightFork = (pid + 1) % n;
+
+            System.out.println("Philosopher [" + pid + "] is HUNGRY.");
+
+            // Wait until we own both forks
+            while (forkOwner[leftFork] != pid || forkOwner[rightFork] != pid) {
+                
+                // Ask neighbors for the forks if we don't have them
+                requestFork(pid, leftFork);
+                requestFork(pid, rightFork);
+
+                // If a neighbor is eating or the fork is clean, they won't give it to us yet.
+                // We must sleep and wait for them to finish and signal us.
+                if (forkOwner[leftFork] != pid || forkOwner[rightFork] != pid) {
+                    conditions[pid].await(); 
+                }
+            }
+
+            // We broke out of the loop, meaning we own both forks!
+            state[pid] = State.EATING;
+            System.out.println("Philosopher [" + pid + "] GOT BOTH FORKS and is EATING...");
+
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public void putdown(int pid) {
+        lock.lock();
+        try {
+            state[pid] = State.THINKING;
+            int leftFork = pid;
+            int rightFork = (pid + 1) % n;
+
+            // 1. We finished eating, so our forks become dirty
+            isDirty[leftFork] = true;
+            isDirty[rightFork] = true;
+            System.out.println("Philosopher [" + pid + "] finished eating. Forks " + leftFork + " and " + rightFork + " are now DIRTY.");
+
+            // 2. Check if our neighbors were waiting for these forks. 
+            // If they are hungry, we hand the newly dirtied forks over immediately.
+            int leftNeighbor = (pid - 1 + n) % n;
+            int rightNeighbor = (pid + 1) % n;
+
+            if (state[leftNeighbor] == State.HUNGRY) {
+                requestFork(leftNeighbor, leftFork);
+            }
+            if (state[rightNeighbor] == State.HUNGRY) {
+                requestFork(rightNeighbor, rightFork);
+            }
+
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    // Helper method to process a fork request
+    private void requestFork(int requesterPid, int forkIdx) {
+        int owner = forkOwner[forkIdx];
+        
+        // If the requester already owns it, do nothing
+        if (owner == requesterPid) return; 
+
+        // THE GOLDEN RULE OF CHANDY-MISRA:
+        // If the owner is NOT currently eating, and the fork is DIRTY, they MUST give it up.
+        // (Even if the owner is also hungry! This prevents deadlocks).
+        if (state[owner] != State.EATING && isDirty[forkIdx]) {
+            
+            forkOwner[forkIdx] = requesterPid; // Transfer ownership
+            isDirty[forkIdx] = false;          // Fork is cleaned in transit!
+            
+            System.out.println("   -> Philosopher [" + owner + "] cleaned and passed Fork " + forkIdx + " to Philosopher [" + requesterPid + "]");
+            
+            // Wake up the requester so they can check their while-loop again
+            conditions[requesterPid].signal(); 
+        }
+    }
+
+    // ==========================================
+    // TEST SIMULATION
+    // ==========================================
+    public static void main(String[] args) {
+        int n = 3;
+        Soln4 table = new Soln4(n);
+
+        Thread[] philosophers = new Thread[n];
+        for (int i = 0; i < n; i++) {
+            final int pid = i;
+            philosophers[i] = new Thread(() -> {
+                try {
+                    // Each philosopher tries to eat 3 times
+                    // for (int j = 0; j < 3; j++) {
+                        table.pickup(pid);
+                        Thread.sleep((long) (Math.random() * 1000)); // Simulate eating time
+                        table.putdown(pid);
+                        Thread.sleep((long) (Math.random() * 1000)); // Simulate thinking time
+                    // }
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            });
+        }
+
+        for (Thread t : philosophers) t.start();
+    }
+
+
+
+    }
 
 }
