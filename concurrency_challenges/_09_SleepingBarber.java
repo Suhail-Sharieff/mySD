@@ -155,96 +155,87 @@ public class _09_SleepingBarber<T> {
 
     @SuppressWarnings("unused")
     private static class FairBarber {
-        private final int numChairs;
-        private final Lock lock = new ReentrantLock();
-        private final Condition customerAvailable = lock.newCondition();
-        private final Condition barberAvailable = lock.newCondition();
+        private final ReentrantLock lock = new ReentrantLock();
+        // It helps to name Conditions based on WHO is waiting
+        private final Condition barberSleeping = lock.newCondition();
+        private final Condition waitingRoom = lock.newCondition();
+        private final Condition barberChair = lock.newCondition();
 
-        private int waiting = 0;
-        private boolean barberReady = false;
-        private final Queue<Integer> customerQueue = new LinkedList<>();
-        private int nextTicket = 0;
-        private int nowServing = 0;
+        private final Queue<Integer> q = new LinkedList<>();
+        private final int maxCap = 3;
 
-        @SuppressWarnings("unused")
-        public FairBarber(int chairs) {
-            this.numChairs = chairs;
-        }
+        // State variables
+        private int customerInChair = -1;
+        private boolean haircutDone = false;
 
-        @SuppressWarnings("unused")
-        public void barber() throws InterruptedException {
-            while (true) {
-                lock.lock();
-                try {
-                    // Wait for a customer
-                    while (waiting == 0) {
-                        System.out.println("Barber is sleeping");
-                        customerAvailable.await();
-                    }
-
-                    // Get next customer
-                    waiting--;
-                    nowServing = customerQueue.poll();
-                    barberReady = true;
-                    barberAvailable.signalAll(); // Wake the right customer
-
-                } finally {
-                    lock.unlock();
-                }
-
-                // Cut hair outside lock
-                cutHair();
-
-                lock.lock();
-                try {
-                    barberReady = false;
-                } finally {
-                    lock.unlock();
-                }
-            }
-        }
-
-        @SuppressWarnings("unused")
-        public boolean customer(int id) throws InterruptedException {
+        public void customerEnter(int c) throws InterruptedException {
             lock.lock();
             try {
-                if (waiting >= numChairs) {
-                    System.out.println("Customer " + id + " leaves (no chairs)");
-                    return false;
+                if (q.size() >= maxCap) {
+                    MyUtils.println("Customer " + c + " LEFT (Shop Full)");
+                    return;
                 }
 
-                // Take a ticket and sit
-                int myTicket = nextTicket++;
-                customerQueue.add(myTicket);
-                waiting++;
-                System.out.println("Customer " + id + " sits (ticket " + myTicket + ")");
+                MyUtils.println("Customer " + c + " ENTERED");
+                q.offer(c);
 
-                // Wake the barber
-                customerAvailable.signal();
+                // Wake up the barber if he is sleeping
+                barberSleeping.signal();
 
-                // Wait for our turn
-                while (!barberReady || nowServing != myTicket) {
-                    barberAvailable.await();
+                // 1. Wait until the barber calls MY specific ID
+                while (customerInChair != c) {
+                    waitingRoom.await();
                 }
+
+                // 2. Wait until my haircut is actually finished
+                while (!haircutDone) {
+                    barberChair.await();
+                }
+
+                MyUtils.println("Customer " + c + " FINISHED and leaving.");
 
             } finally {
                 lock.unlock();
             }
-
-            getHaircut(id);
-            return true;
         }
 
-        private void cutHair() {
-            System.out.println("Barber is cutting hair");
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
+        public void serveCustomer() throws InterruptedException {
+            while (true) {
+                lock.lock();
+                try {
+                    // Wait for a customer to enter the queue
+                    while (q.isEmpty()) {
+                        barberSleeping.await();
+                    }
+
+                    // Call the next customer over
+                    customerInChair = q.poll();
+                    haircutDone = false;
+
+                    // Wake up the customers so the chosen one can break their while-loop
+                    waitingRoom.signalAll();
+
+                    MyUtils.println("Barber is SERVING Customer " + customerInChair);
+
+                } finally {
+                    // IMPORTANT: Unlock here so other customers can still enter the waiting room!
+                    lock.unlock();
+                }
+
+                // Simulate the haircut OUTSIDE the lock
+                MyUtils.sleep(3000);
+
+                lock.lock();
+                try {
+                    // Haircut is complete
+                    haircutDone = true;
+
+                    // Tell the customer in the chair they can leave
+                    barberChair.signalAll();
+                } finally {
+                    lock.unlock();
+                }
             }
-        }
-
-        private void getHaircut(int id) {
-            System.out.println("Customer " + id + " is getting haircut");
         }
     }
 }
