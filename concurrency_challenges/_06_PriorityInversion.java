@@ -5,7 +5,7 @@ import java.time.LocalTime;
 /*
 say there are 2 resources R1 and R2
 
-t=0 LP acquires R1, say it needs 3 seconds to complete
+t=0 LP acquires R1, say it needs 3 seconds to complete, HP also wants to acquire R1, but LP acquires so waits
 
 t=1 MP acquires R2, but CPU gives time to MP now, say it needs 5 seconds to complete, LP pauses still 2 seconds time remaining
 
