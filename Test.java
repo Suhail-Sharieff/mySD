@@ -1,122 +1,98 @@
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.Arrays;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
-import utils.MyUtils;
 
 public class Test {
-
-    public static void main(String[] args) throws InterruptedException {
-        Test obj = new Test();
-
-        Thread singleBarber = new Thread(() -> {
-            try {
-                obj.serveCustomer();
-            } catch (InterruptedException ex) {
-                System.out.println("Barber: Shop is closed, going home!");
-            }
-        }, "Barber");
-
-        Thread[] customers = new Thread[10];
-        for (int i = 0; i < customers.length; i++) {
-            final int j = i;
-            customers[i] = new Thread(() -> {
-                try {
-                    obj.customerEnter(j);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }, "Customer[" + i + "]");
-        }
-
-        singleBarber.start();
-        for (Thread c : customers) c.start();
-        for (Thread c : customers) c.join();
-
-        singleBarber.interrupt();
-        singleBarber.join();
+    public static void main(String[] args) {
+        
     }
 
-    private final ReentrantLock lock = new ReentrantLock();
-    // It helps to name Conditions based on WHO is waiting
-    private final Condition barberSleeping = lock.newCondition(); 
-    private final Condition waitingRoom = lock.newCondition(); 
-    private final Condition barberChair = lock.newCondition(); 
 
-    private final Queue<Integer> q = new LinkedList<>();
-    private final int maxCap = 3;
-    
-    // State variables
-    private int customerInChair = -1;
-    private boolean haircutDone = false;
+    final int n=5;
+    enum State{EATING,THINKING,HUNGRY}
+    int owner[];
+    ReentrantLock lock=new ReentrantLock();
+    Condition cond[];
+    State state[];
+    boolean isDirty[];
 
-    public void customerEnter(int c) throws InterruptedException {
+    public Test() {
+        owner=new int[n];
+        for(int i=0;i<n;i++) {
+            owner[i]=Math.min(i, (i+1)%n);
+        }
+        cond=new Condition[n];
+        for(int i=0;i<n;i++) cond[i]=lock.newCondition();
+        state=new State[n];
+        for(int i=0;i<n;i++) state[i]=State.THINKING;
+        isDirty=new boolean[n];
+        Arrays.fill(isDirty, true);
+    }
+
+
+    void pickFork(int pid) throws InterruptedException{
         lock.lock();
-        try {
-            if (q.size() >= maxCap) {
-                MyUtils.println("Customer " + c + " LEFT (Shop Full)");
-                return;
+        try{
+            state[pid]=State.HUNGRY;
+            int left=pid;
+            int right=(pid+1)%n;
+            System.out.println(pid+ "is hungry");
+            while(owner[left]!=pid || owner[right]!=pid){
+                requestFork(pid, left);
+                requestFork(pid, right);
+                if(owner[left]!=pid || owner[right]!=pid) cond[pid].await();
             }
-            
-            MyUtils.println("Customer " + c + " ENTERED");
-            q.offer(c);
-            
-            // Wake up the barber if he is sleeping
-            barberSleeping.signal();
+            System.out.println(pid+" got forks "+left+" and "+right+". Eating.....");
+            state[pid]=State.EATING;
 
-            // 1. Wait until the barber calls MY specific ID
-            while (customerInChair != c) {
-                waitingRoom.await();
-            }
-
-            // 2. Wait until my haircut is actually finished
-            while (!haircutDone) {
-                barberChair.await();
-            }
-            
-            MyUtils.println("Customer " + c + " FINISHED and leaving.");
-
-        } finally {
+        }finally{
             lock.unlock();
         }
     }
+    void putFork(int pid){
+        lock.lock();
+        try{
+            state[pid]=State.THINKING;  
+            int left=pid;
+            int right=(pid+1)%n;
+            isDirty[left]=true;
+            isDirty[right]=true;
+            System.out.println(pid+" completed eating "+left+" n "+right+" are dirty now, chking if hungry neighbors wants them");
 
-    public void serveCustomer() throws InterruptedException {
-        while (true) {
-            lock.lock();
-            try {
-                // Wait for a customer to enter the queue
-                while (q.isEmpty()) {
-                    barberSleeping.await();
-                }
+            int leftNeigh=(pid-1+n)%n;
+            int rightNeigh=(pid+1)%n;
 
-                // Call the next customer over
-                customerInChair = q.poll();
-                haircutDone = false; 
-                
-                // Wake up the customers so the chosen one can break their while-loop
-                waitingRoom.signalAll(); 
-                
-                MyUtils.println("Barber is SERVING Customer " + customerInChair);
-                
-            } finally {
-                // IMPORTANT: Unlock here so other customers can still enter the waiting room!
-                lock.unlock(); 
+            if(state[leftNeigh]==State.HUNGRY){
+                requestFork(leftNeigh, left);
             }
-
-            // Simulate the haircut OUTSIDE the lock
-            MyUtils.sleep(3000);
-
-            lock.lock();
-            try {
-                // Haircut is complete
-                haircutDone = true;
-                
-                // Tell the customer in the chair they can leave
-                barberChair.signalAll(); 
-            } finally {
-                lock.unlock();
+            if(state[rightNeigh]==State.HUNGRY){
+                requestFork(rightNeigh, right);
             }
+        }finally{
+            lock.unlock();
         }
     }
+    void eat(int pid) throws InterruptedException{
+        pickFork(pid);
+        state[pid]=State.EATING;
+        putFork(pid);
+    }
+
+    void requestFork(int requesterId,int forkNumber){
+        int currOwner=owner[requesterId];
+        if(currOwner==requesterId) return;
+        if(state[currOwner]!=State.EATING && isDirty[forkNumber]){
+            isDirty[forkNumber]=false;
+            owner[forkNumber]=requesterId;
+            System.out.println(currOwner+" passed "+forkNumber+" to "+requesterId);
+            cond[requesterId].signal();
+        }
+    }
+
+
+
+
+
+
+
 }

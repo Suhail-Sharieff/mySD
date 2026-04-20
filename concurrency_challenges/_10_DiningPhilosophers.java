@@ -1,6 +1,5 @@
 package concurrency_challenges;
 
-import java.util.Arrays;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -13,9 +12,9 @@ public class _10_DiningPhilosophers {
 
     public static void main(String[] args) throws InterruptedException {
         //i hv added while(true).. coz in PROD its continues, to test here, comment while(true), else face infinite loop
-        // DeadLockSimulation.main(args);
-        // Soln1.main(args);
-        // Soln2.main(args);
+        DeadLockSimulation.main(args);
+        Soln1.main(args);
+        Soln2.main(args);
         Soln4.main(args);
     }
 
