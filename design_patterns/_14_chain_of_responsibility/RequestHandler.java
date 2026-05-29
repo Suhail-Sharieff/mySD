@@ -15,7 +15,7 @@ public abstract class RequestHandler implements MiddlewareFunc{
     public boolean handle(Request req) {
         if(!check(req)) return false;//check() will be impl by Checker classes
         if(next==null) return true;
-        return next.handle(req);
+        return next.handle(req);//MISTAKE: wrote next.check(req) insted of handle
     }
     //builder pattern to build chain of middlewares
     static class ChainBuilder{
