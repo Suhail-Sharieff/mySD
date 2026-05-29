@@ -17,7 +17,7 @@ the curr version is one time and 1 winner game
 public class Main {
 
     public static void main(String[] args) {
-        List<Win>winStrategy=List.of(new WinningStrategy());
+        List<WinningStrategy>winStrategy=List.of(new WinningStrategy());
         Map<Integer, Integer> snakes = Map.of(
                 14, 7,
                 22, 3

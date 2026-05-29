@@ -11,7 +11,7 @@ class Game{
     private final Deque<Player>players;
     private final Board board;
     private final HashMap<Player,Integer>positions;
-    private final List<Win>winningStrategy;
+    private final List<WinningStrategy>winningStrategy;
     private boolean isEnded;
     private final Dice dice;
 
@@ -21,7 +21,7 @@ class Game{
     public void setEnded(boolean isEnded) {
         this.isEnded = isEnded;
     }
-    public Game(List<Player> players, Board board,List<Win>winningStrategy,Dice dice) {
+    public Game(List<Player> players, Board board,List<WinningStrategy>winningStrategy,Dice dice) {
         this.players = new LinkedList<>(players);
         this.board = board;
         this.positions = new HashMap<>();
