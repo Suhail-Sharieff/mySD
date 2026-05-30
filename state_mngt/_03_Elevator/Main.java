@@ -13,6 +13,7 @@
 - to manage states use State pattrn
 - to control elevators use Command Pattern
 - Controller servers a Facade to controll elevators, so Facade pattern
+- furtther we can monitor our elevators too using Observer pattern
 */
 
 
