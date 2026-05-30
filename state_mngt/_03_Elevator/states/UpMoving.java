@@ -1,6 +1,5 @@
 package state_mngt._03_Elevator.states;
 
-import java.net.Authenticator.RequestorType;
 
 import state_mngt._03_Elevator.Entities.Elevator;
 import state_mngt._03_Elevator.Entities.ElevatorRequest;

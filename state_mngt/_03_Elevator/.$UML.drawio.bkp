@@ -1,0 +1,163 @@
+<mxfile host="Electron">
+  <diagram name="ElevatorUML" id="elevator_clean_1">
+    <mxGraphModel dx="1400" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="1100" background="none" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ==================== CLASSES & INTERFACES ==================== -->
+
+        <!-- Row 1 -->
+        <mxCell id="main" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" vertex="1" parent="1" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;Main&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;+ main(String[] args)&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;+ run(): void&lt;/p&gt;">
+          <mxGeometry x="50" y="50" width="260" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="controller" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" vertex="1" parent="1" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;ElevatorController&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;- elevators: List&amp;lt;Elevator&amp;gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;- algorithm: SchedulingAlgorithm&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;+ scheduleElevator(req)&lt;/p&gt;">
+          <mxGeometry x="400" y="50" width="280" height="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="algo_iface" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" vertex="1" parent="1" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;&amp;lt;&amp;lt;interface&amp;gt;&amp;gt;&lt;br/&gt;SchedulingAlgorithm&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;+ schedule(elevators, req): Optional&amp;lt;Elevator&amp;gt;&lt;/p&gt;">
+          <mxGeometry x="780" y="50" width="280" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- Row 2 -->
+        <mxCell id="request" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" vertex="1" parent="1" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;ElevatorRequest&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;- type: ElevatorRequestType&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;- destFloor: int&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;- dir: Direction&lt;/p&gt;&lt;hr&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;+ getDestFloor(): int&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;+ getType(): ElevatorRequestType&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;+ getDir(): Direction&lt;/p&gt;">
+          <mxGeometry x="50" y="240" width="260" height="160" as="geometry" />
+        </mxCell>
+
+        <mxCell id="elevator" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" vertex="1" parent="1" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;Elevator&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;- currentFloorPosition: int&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;- id: String&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;- currState: ElevatorState&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;- dir: Direction&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;- myObservers: List&amp;lt;ElevatorObserver&amp;gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;- upReq: TreeSet&amp;lt;ElevatorRequest&amp;gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;- downReq: TreeSet&amp;lt;ElevatorRequest&amp;gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;- isRunning: boolean&lt;/p&gt;&lt;hr&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;+ move(): void&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;+ serveRequest(req): void&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;+ addObserver(o): void&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;+ removeObserver(o): void&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;+ setCurrState(state): void&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;+ setDir(dir): void&lt;/p&gt;">
+          <mxGeometry x="400" y="240" width="280" height="260" as="geometry" />
+        </mxCell>
+
+        <mxCell id="nearest_algo" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" vertex="1" parent="1" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;NearestElevator&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;+ schedule(elevators, req): Optional&amp;lt;Elevator&amp;gt;&lt;/p&gt;">
+          <mxGeometry x="780" y="190" width="280" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Row 3 & 4 (States) -->
+        <mxCell id="state_iface" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" vertex="1" parent="1" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;&amp;lt;&amp;lt;interface&amp;gt;&amp;gt;&lt;br/&gt;ElevatorState&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;+ move(e): void&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;+ schedule(req, e): void&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;+ getDir(e): Direction&lt;/p&gt;">
+          <mxGeometry x="780" y="360" width="240" height="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="idle_state" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" vertex="1" parent="1" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;IdleState&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;+ move(e): void&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;+ schedule(req, e): void&lt;/p&gt;">
+          <mxGeometry x="1100" y="240" width="220" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="up_state" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" vertex="1" parent="1" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;UpMoving&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;+ move(e): void&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;+ schedule(req, e): void&lt;/p&gt;">
+          <mxGeometry x="1100" y="375" width="220" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="down_state" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" vertex="1" parent="1" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;DownMoving&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;+ move(e): void&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;+ schedule(req, e): void&lt;/p&gt;">
+          <mxGeometry x="1100" y="510" width="220" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- Observers -->
+        <mxCell id="observer_iface" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" vertex="1" parent="1" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;&amp;lt;&amp;lt;interface&amp;gt;&amp;gt;&lt;br/&gt;ElevatorObserver&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;+ getDetailsOf(e): void&lt;/p&gt;">
+          <mxGeometry x="50" y="440" width="260" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="display" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" vertex="1" parent="1" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;Display&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;+ getDetailsOf(e): void&lt;/p&gt;">
+          <mxGeometry x="50" y="560" width="260" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Enums -->
+        <mxCell id="dir_enum" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" vertex="1" parent="1" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;&amp;lt;&amp;lt;enum&amp;gt;&amp;gt;&lt;br/&gt;Direction&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;UP, DOWN, IDLE&lt;/p&gt;">
+          <mxGeometry x="420" y="580" width="240" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="req_type_enum" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" vertex="1" parent="1" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;&amp;lt;&amp;lt;enum&amp;gt;&amp;gt;&lt;br/&gt;ElevatorRequestType&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&lt;p style=&quot;margin:0px;margin-top:4px;text-align:left;&quot;&gt;INTERNAL, EXTERNAL&lt;/p&gt;">
+          <mxGeometry x="50" y="700" width="260" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- ==================== EDGES (RELATIONSHIPS) ==================== -->
+
+        <!-- Main Dependencies -->
+        <mxCell id="e_main_ctrl" edge="1" parent="1" source="main" target="controller" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;endArrow=open;endFill=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Controller Aggregations -->
+        <mxCell id="e_ctrl_algo" edge="1" parent="1" source="controller" target="algo_iface" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;startArrow=diamond;startFill=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="l_ctrl_algo" connectable="0" parent="e_ctrl_algo" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="has A&lt;div&gt;1:1&lt;/div&gt;" vertex="1">
+          <mxGeometry relative="1" x="-0.1" y="0" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e_ctrl_elev" edge="1" parent="1" source="controller" target="elevator" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;startArrow=diamondThin;startFill=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="l_ctrl_elev" connectable="0" parent="e_ctrl_elev" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="has A&lt;div&gt;1:N&lt;/div&gt;" vertex="1">
+          <mxGeometry relative="1" x="-0.2" y="0" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+
+        <!-- Implements: Algorithm -->
+        <mxCell id="e_nearest_algo" edge="1" parent="1" source="nearest_algo" target="algo_iface" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;endArrow=block;endFill=0;exitX=0.5;exitY=0;entryX=0.5;entryY=1;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="l_nearest_algo" connectable="0" parent="e_nearest_algo" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="implements" vertex="1">
+          <mxGeometry relative="1" x="0" y="0" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+
+        <!-- Elevator Aggregations -->
+        <mxCell id="e_elev_state" edge="1" parent="1" source="elevator" target="state_iface" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;startArrow=diamond;startFill=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="l_elev_state" connectable="0" parent="e_elev_state" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="has A&lt;div&gt;1:1&lt;/div&gt;" vertex="1">
+          <mxGeometry relative="1" x="-0.1" y="0" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e_elev_obs" edge="1" parent="1" source="elevator" target="observer_iface" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;startArrow=diamond;startFill=0;exitX=0;exitY=0.75;entryX=1;entryY=0.5;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="l_elev_obs" connectable="0" parent="e_elev_obs" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="has A&lt;div&gt;1:N&lt;/div&gt;" vertex="1">
+          <mxGeometry relative="1" x="-0.1" y="0" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+
+        <!-- Dependencies / Uses -->
+        <mxCell id="e_elev_req" edge="1" parent="1" source="elevator" target="request" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;endArrow=open;endFill=0;exitX=0;exitY=0.25;entryX=1;entryY=0.25;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="l_elev_req" connectable="0" parent="e_elev_req" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="uses" vertex="1">
+          <mxGeometry relative="1" x="-0.1" y="0" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e_elev_dir" edge="1" parent="1" source="elevator" target="dir_enum" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;endArrow=open;endFill=0;exitX=0.5;exitY=1;entryX=0.5;entryY=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e_req_dir" edge="1" parent="1" source="request" target="dir_enum" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;endArrow=open;endFill=0;exitX=1;exitY=0.8;entryX=0;entryY=0.5;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e_req_type" edge="1" parent="1" source="request" target="req_type_enum" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;endArrow=open;endFill=0;exitX=0.5;exitY=1;entryX=0.5;entryY=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Implements: States -->
+        <mxCell id="e_idle_state" edge="1" parent="1" source="idle_state" target="state_iface" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;endArrow=block;endFill=0;exitX=0;exitY=0.5;entryX=1;entryY=0.25;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e_up_state" edge="1" parent="1" source="up_state" target="state_iface" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;endArrow=block;endFill=0;exitX=0;exitY=0.5;entryX=1;entryY=0.5;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="l_up_state" connectable="0" parent="e_up_state" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="implements" vertex="1">
+          <mxGeometry relative="1" x="-0.1" y="0" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e_down_state" edge="1" parent="1" source="down_state" target="state_iface" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;endArrow=block;endFill=0;exitX=0;exitY=0.5;entryX=1;entryY=0.75;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Implements: Observers -->
+        <mxCell id="e_disp_obs" edge="1" parent="1" source="display" target="observer_iface" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;endArrow=block;endFill=0;exitX=0.5;exitY=0;entryX=0.5;entryY=1;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="l_disp_obs" connectable="0" parent="e_disp_obs" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="implements" vertex="1">
+          <mxGeometry relative="1" x="0" y="0" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
