@@ -1,0 +1,89 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class AllocationFactory {
+  ~ getAllocationStrategy(Vehicle): AllocationStrategy
+}
+interface AllocationStrategy << interface >> {
+  + getSlot(Vehicle, List<ParkingSlot>): ParkingSlot
+}
+class BillingFactory {
+  ~ getTotal(Ticket): BillingStrategy
+}
+interface BillingStrategy << interface >> {
+  + getTotal(Ticket): int
+}
+class DefaultBillingStrategy {
+  + getTotal(Ticket): int
+}
+class FloorSelectionFactory {
+  ~ getFloorStrategy(Vehicle, List<ParkingFloor>): FloorSelectionStrategy
+}
+interface FloorSelectionStrategy << interface >> {
+  + selectFloor(Vehicle, List<ParkingFloor>): ParkingFloor
+}
+class HourlyBillingStrategy {
+  + getTotal(Ticket): int
+}
+class NearestAllocationStrategy {
+  + getSlot(Vehicle, List<ParkingSlot>): ParkingSlot
+}
+class ParkingFloor {
+  ~ floorNumber: int
+  ~ slots: List<ParkingSlot>
+  ~ unpark(ParkingSlot): Vehicle
+  ~ park(Vehicle, AllocationStrategy): void
+}
+class ParkingLot {
+  ~ floors: List<ParkingFloor>
+  ~ billingStrategy: BillingStrategy
+  ~ floorStrategy: FloorSelectionStrategy
+  ~ allocStrategy: AllocationStrategy
+  ~ getTicket(Vehicle): Ticket
+  ~ checkout(Ticket): void
+}
+class ParkingSlot {
+  ~ id: int
+  ~ dis: int
+  ~ supportedSize: VehicleType
+  ~ parkedVechicle: Vehicle
+  ~ isEmpty(): boolean
+  ~ park(Vehicle): void
+  ~ unpark(): Vehicle
+}
+class RandomAllocationStrategy {
+  + getSlot(Vehicle, List<ParkingSlot>): ParkingSlot
+}
+class RandomFloorStartegy {
+  + selectFloor(Vehicle, List<ParkingFloor>): ParkingFloor
+}
+class Ticket {
+  ~ exit: Instant
+  ~ slot: ParkingSlot
+  ~ id: int
+  ~ entry: Instant
+  ~ floor: ParkingFloor
+  ~ vehicle: Vehicle
+  ~ setExit(Instant): void
+}
+class Vehicle {
+  ~ id: int
+  ~ type: VehicleType
+}
+enum VehicleType << enumeration >> {
+  + small: 
+  + large: 
+  + medium: 
+  + values(): VehicleType[]
+  + valueOf(String): VehicleType
+}
+
+DefaultBillingStrategy     -[#008200,dashed]-^  BillingStrategy           
+HourlyBillingStrategy      -[#008200,dashed]-^  BillingStrategy           
+NearestAllocationStrategy  -[#008200,dashed]-^  AllocationStrategy        
+RandomAllocationStrategy   -[#008200,dashed]-^  AllocationStrategy        
+RandomFloorStartegy        -[#008200,dashed]-^  FloorSelectionStrategy    
+@enduml
