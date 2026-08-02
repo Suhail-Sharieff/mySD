@@ -39,3 +39,61 @@ public class Main {
 
     }
 }
+/*
+another short way:
+
+public class Main {
+
+    public static void main(String[] args) {
+        Product p=new Product(1,340,true);
+        CustomPredicate<Product>pred=new IdPredicate().and(new PricePredicate()).and(new AvailablePredicate());
+        System.out.println(pred.test(p));
+    }
+}
+class Product{
+    int id;
+    int price;
+    boolean available;
+    public Product(int x,int y,boolean z) {
+        this.id=x;
+        this.price=y;
+        this.available=z;
+    }
+}
+
+class IdPredicate implements CustomPredicate<Product>{
+    @Override
+    public boolean test(Product obj) {
+        return obj.id==1;
+    }
+} 
+class PricePredicate implements CustomPredicate<Product>{
+    @Override
+    public boolean test(Product obj) {
+        return obj.price<=300;
+    }
+} 
+class AvailablePredicate implements CustomPredicate<Product>{
+    @Override
+    public boolean test(Product obj) {
+        return obj.available;
+    }
+} 
+
+
+
+interface CustomPredicate<T> {
+    default CustomPredicate<T>and(CustomPredicate<T>o){
+        return obj->this.test(obj) && o.test(obj);
+    }
+    default CustomPredicate<T>or(CustomPredicate<T>o){
+        return obj->this.test(obj) && o.test(obj);
+    }
+    default CustomPredicate<T>not(){
+        return obj->!this.test(obj);
+    }
+    boolean test(T obj);
+}
+
+
+*/
