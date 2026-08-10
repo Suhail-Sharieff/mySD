@@ -2,7 +2,16 @@ package questions._04_car_rental;
 
 import java.time.Instant;
 import java.util.List;
-
+/*
+locations have many cars of many types
+admin can add locations, cars in them
+user reserves a car
+user pickups the car
+user uses vehicle, vehicle is observed by admin for tracking
+user submits vehicle
+he is given bill
+he pays for that bill
+*/
 enum VehicleType{
     SUV,
     LUXURY,
